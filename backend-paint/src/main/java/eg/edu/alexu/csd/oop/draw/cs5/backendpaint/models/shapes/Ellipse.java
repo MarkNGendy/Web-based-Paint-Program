@@ -27,10 +27,6 @@ public class Ellipse extends Shape{
         shapePoints = new Point[1];
     }
 
-    @Override
-    void draw() {
-
-    }
 
     @Override
     void move() {

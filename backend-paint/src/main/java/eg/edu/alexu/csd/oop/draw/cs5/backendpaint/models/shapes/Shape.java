@@ -5,7 +5,6 @@ import java.awt.*;
 public abstract class Shape {
     Point[] shapePoints;
 
-    abstract void draw();
     abstract void move();
     abstract void resize();
     abstract void delete();

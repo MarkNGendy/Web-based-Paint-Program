@@ -27,10 +27,7 @@ public class Rectangle extends Shape{
         shapePoints = new Point[4];
     }
 
-    @Override
-    void draw() {
 
-    }
 
     @Override
     void move() {

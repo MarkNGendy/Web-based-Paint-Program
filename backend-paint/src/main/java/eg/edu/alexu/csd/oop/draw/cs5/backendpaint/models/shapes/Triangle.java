@@ -7,10 +7,7 @@ public class Triangle extends Shape{
         shapePoints = new Point[3];
     }
 
-    @Override
-    void draw() {
 
-    }
 
     @Override
     void move() {

@@ -9,13 +9,8 @@ public class Line extends Shape{
     }
 
     @Override
-    void draw() {
-
-    }
-
-    @Override
     void move() {
-
+        
     }
 
     @Override
