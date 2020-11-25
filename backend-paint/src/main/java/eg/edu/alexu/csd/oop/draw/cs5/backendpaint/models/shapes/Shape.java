@@ -1,25 +1,27 @@
 package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes;
 
 import java.awt.*;
-import java.util.LinkedList;
+import java.util.List;
 
 public abstract class Shape {
-    LinkedList<Point> shapePoints;
-    ShapeType type;
-    int colour;
+    List<Point> points;
+    ShapeType shapeType;
 
-    public LinkedList<Point> getShapePoints() {
-        return shapePoints;
+    public Shape(List<Point> points, ShapeType shapeType) {
+        this.points = points;
+        this.shapeType = shapeType;
     }
 
 
-    public ShapeType getType() {
-        return type;
+    public List<Point> getPoints() {
+        return points;
     }
 
-    abstract void move();
-    abstract void resize();
+
+    public ShapeType getShapeType() {
+        return shapeType;
+    }
+
     abstract void delete();
     abstract void colourShape();
-
 }

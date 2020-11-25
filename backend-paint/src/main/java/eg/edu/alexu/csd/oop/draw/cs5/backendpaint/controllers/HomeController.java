@@ -11,17 +11,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.awt.*;
-import java.util.LinkedList;
+import java.util.List;
 
 @RestController
 @CrossOrigin
 public class HomeController {
-    @PostMapping("/add-shape")
+
+    @PostMapping("/shapes/add")
     Board modifyBoard(@RequestBody RequestBodyForm requestBodyForm) {
         Board board = new Board(requestBodyForm.board);
         ShapeFactory shapeFactory = new ShapeFactory();
-        ShapeType addedShapeType = requestBodyForm.shape.getType();
-        LinkedList<Point> addedShapePoints = requestBodyForm.shape.getShapePoints();
+        ShapeType addedShapeType = requestBodyForm.shape.getShapeType();
+        List<Point> addedShapePoints = requestBodyForm.shape.getPoints();
         Shape addedShape = shapeFactory.createShape(addedShapeType, addedShapePoints);
         board.addShape(addedShape);
         return board;

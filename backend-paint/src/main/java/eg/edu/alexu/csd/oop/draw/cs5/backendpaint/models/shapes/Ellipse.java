@@ -1,21 +1,22 @@
 package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes;
 
 import java.awt.*;
-import java.util.LinkedList;
+import java.util.List;
 
 public class Ellipse extends Shape{
 
     double vDiameter;
     double hDiameter;
 
-    public Ellipse(LinkedList<Point> vertices) {
-        shapePoints = vertices;
+    public Ellipse(List<Point> vertices) {
+        super(vertices, ShapeType.ELLIPSE);
+        points = vertices;
         //shapePoints[0] Center
         //shapePoints[1] vertical
         // shapePoints[2] horizontal
-        setvDiameter(distBetTwoPoints(shapePoints.get(0), shapePoints.get(1)));
-        sethDiameter(distBetTwoPoints(shapePoints.get(0), shapePoints.get(2)));
-        this.type = ShapeType.ELLIPSE;
+        setvDiameter(distBetTwoPoints(points.get(0), points.get(1)));
+        sethDiameter(distBetTwoPoints(points.get(0), points.get(2)));
+        this.shapeType = ShapeType.ELLIPSE;
     }
 
     public void setvDiameter(double vDiameter) {
@@ -24,18 +25,6 @@ public class Ellipse extends Shape{
 
     public void sethDiameter(double hDiameter) {
         this.hDiameter = hDiameter;
-    }
-
-
-
-    @Override
-    void move() {
-
-    }
-
-    @Override
-    void resize() {
-
     }
 
     @Override

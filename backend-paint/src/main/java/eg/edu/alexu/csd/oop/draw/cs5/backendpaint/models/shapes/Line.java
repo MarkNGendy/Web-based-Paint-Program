@@ -1,14 +1,14 @@
 package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes;
 
 import java.awt.*;
-import java.util.LinkedList;
+import java.util.List;
 
 public class Line extends Shape{
 
 
-    public Line(LinkedList<Point> vertices) {
-        shapePoints = vertices;
-        this.type = ShapeType.LINE;
+    public Line(List<Point> vertices) {
+        points = vertices;
+        this.shapeType = ShapeType.LINE;
     }
 
     @Override

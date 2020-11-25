@@ -5,10 +5,10 @@ import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.Rectangle;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.Shape;
 
 import java.awt.*;
-import java.util.LinkedList;
+import java.util.List;
 
 public class ShapeFactory {
-    public Shape createShape(ShapeType shapeType, LinkedList<Point> vertices) {
+    public Shape createShape(ShapeType shapeType, List<Point> vertices) {
         return switch (shapeType) {
             case LINE -> new Line(vertices);
             case CIRCLE -> new Circle(vertices);
