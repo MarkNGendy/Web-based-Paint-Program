@@ -6,4 +6,16 @@ import java.util.LinkedList;
 
 public class Board {
     LinkedList<Shape> shapes;
+
+    public Board(Board board) {
+        shapes = new LinkedList<>();
+        shapes = board.shapes;
+    }
+
+    public void addShape (Shape shape) {
+        shapes.add(shape);
+    }
+
+
+
 }

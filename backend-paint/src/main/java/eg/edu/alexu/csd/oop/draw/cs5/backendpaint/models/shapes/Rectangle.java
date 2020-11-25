@@ -1,6 +1,7 @@
 package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes;
 
 import java.awt.*;
+import java.util.LinkedList;
 
 public class Rectangle extends Shape{
 
@@ -23,8 +24,13 @@ public class Rectangle extends Shape{
         this.width = width;
     }
 
-    public Rectangle() {
-        shapePoints = new Point[4];
+    public Rectangle(LinkedList<Point> vertices) {
+        shapePoints = new LinkedList<>();
+        shapePoints.add(0, vertices.get(0));
+        shapePoints.add(1, new Point(vertices.get(0).x, vertices.get(1).y));
+        shapePoints.add(2, new Point(vertices.get(1).x, vertices.get(0).y));
+        shapePoints.add(3, vertices.get(1));
+        type = ShapeType.RECTANGLE;
     }
 
 
