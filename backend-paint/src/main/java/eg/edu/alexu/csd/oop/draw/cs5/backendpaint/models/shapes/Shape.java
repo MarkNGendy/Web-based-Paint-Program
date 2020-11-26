@@ -19,17 +19,11 @@ public abstract class Shape {
     public List<Point> getPoints() {
         return points;
     }
-
-
+    
     public ShapeType getShapeType() {
         return shapeType;
     }
 
-    abstract void editShape();
-    abstract void deleteShape();
-
-
-    abstract void colourShape();
 
     public int getIndexInBoard() {
         return indexInBoard;

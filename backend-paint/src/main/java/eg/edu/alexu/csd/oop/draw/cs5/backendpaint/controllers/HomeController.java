@@ -2,6 +2,7 @@ package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.controllers;
 
 
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Board;
+import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Project;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.ShapeFactory;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.Shape;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.ShapeType;
@@ -17,16 +18,38 @@ import java.util.List;
 @CrossOrigin
 public class HomeController {
 
-    @PostMapping("/shapes/add")
+    @PostMapping("/shapes/")
     Board addShape(@RequestBody RequestBodyForm requestBodyForm) {
-        Board board = Board.getBoard();
+        Board board = new Board();
+        board.setShapes(requestBodyForm.board.getShapes());
         ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
-        ShapeType addedShapeType = requestBodyForm.shape.getShapeType();
-        List<Point> addedShapePoints = requestBodyForm.shape.getPoints();
-        Shape addedShape = shapeFactory.createShape(addedShapeType, addedShapePoints);
-        board.addShape(addedShape);
+        ShapeType requiredShapeType = requestBodyForm.shape.getShapeType();
+        List<Point> requiredShapePoints = requestBodyForm.shape.getPoints();
+        Shape requiredShape = shapeFactory.createShape(requiredShapeType, requiredShapePoints);
+        int indexOfShape = requestBodyForm.shape.getIndexInBoard();
+        Project project = Project.getProject();
+        switch (requestBodyForm.operation) {
+            case CREATE:
+                board.addShape(requiredShape);
+                project.saveBoard(board);
+                break;
+            case MOVE:
+            case RESIZE:
+            case COLOUR:
+                board.getShapes().set(indexOfShape, requiredShape);
+                project.saveBoard(board);
+                break;
+            case DELETE:
+                board.getShapes().set(indexOfShape, null);
+                project.saveBoard(board);
+                break;
+        }
         return board;
     }
+
+
+
+
 
 
 }

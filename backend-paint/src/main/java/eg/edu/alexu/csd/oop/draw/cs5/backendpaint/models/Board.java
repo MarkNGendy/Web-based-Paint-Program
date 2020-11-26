@@ -7,23 +7,18 @@ import java.util.List;
 
 public class Board {
 
-    private static Board board;
     List<Shape> shapes;
 
-
-    public void setShapes(List<Shape> shapes) {
-        this.shapes = shapes;
-    }
-
-    private Board() {
+    public Board() {
         shapes = new ArrayList<>();
     }
 
-    public static Board getBoard() {
-        if (board == null) {
-            board = new Board();
-        }
-        return board;
+    public List<Shape> getShapes() {
+        return shapes;
+    }
+
+    public void setShapes(List<Shape> shapes) {
+        this.shapes = shapes;
     }
 
     public void addShape (Shape shape) {
