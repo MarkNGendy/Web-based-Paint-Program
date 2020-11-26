@@ -2,7 +2,7 @@ package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.controllers;
 
 
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Board;
-import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Project;
+import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.SaveManager;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.ShapeFactory;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.Shape;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.ShapeType;
@@ -26,25 +26,25 @@ public class HomeController {
         List<Point> requiredShapePoints = requestBodyForm.shape.getPoints();
         Shape requiredShape = shapeFactory.createShape(requiredShapeType, requiredShapePoints);
         int indexOfShape = requestBodyForm.shape.getIndexInBoard();
-        Project project = Project.getProject();
-        if (project.getBoards().isEmpty()) {
+        SaveManager saveManager = SaveManager.getProject();
+        if (saveManager.getBoards().isEmpty()) {
             board = new Board();
         } else {
             board = new Board();
-            board.setShapes(project.getBoards().get(project.getBoards().size() - 1).getShapes());
+            board.setShapes(saveManager.getBoards().get(saveManager.getBoards().size() - 1).getShapes());
         }
         switch (requestBodyForm.operation) {
             case CREATE -> {
                 board.addShape(requiredShape);
-                project.saveBoard(board);
+                saveManager.saveBoard(board);
             }
             case MOVE, RESIZE, COLOUR -> {
                 board.getShapes().set(indexOfShape, requiredShape);
-                project.saveBoard(board);
+                saveManager.saveBoard(board);
             }
             case DELETE -> {
                 board.getShapes().set(indexOfShape, null);
-                project.saveBoard(board);
+                saveManager.saveBoard(board);
             }
         }
         return board;

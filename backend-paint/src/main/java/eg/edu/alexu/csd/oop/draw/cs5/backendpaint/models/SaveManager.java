@@ -3,12 +3,12 @@ package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Project {
+public class SaveManager {
 
-    private static Project project;
+    private static SaveManager saveManager;
     List<Board> boards;
 
-    private Project() {
+    private SaveManager() {
         boards = new ArrayList<>();
     }
 
@@ -16,11 +16,11 @@ public class Project {
         return boards;
     }
 
-    public static Project getProject() {
-        if (project == null) {
-            project = new Project();
+    public static SaveManager getProject() {
+        if (saveManager == null) {
+            saveManager = new SaveManager();
         }
-        return project;
+        return saveManager;
     }
 
     public void saveBoard(Board board) {
