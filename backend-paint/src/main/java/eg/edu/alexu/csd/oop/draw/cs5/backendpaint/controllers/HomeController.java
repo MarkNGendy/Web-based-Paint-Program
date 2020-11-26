@@ -19,37 +19,34 @@ import java.util.List;
 public class HomeController {
 
     @PostMapping("/shapes/")
-    Board addShape(@RequestBody RequestBodyForm requestBodyForm) {
-        Board board = new Board();
-        board.setShapes(requestBodyForm.board.getShapes());
+    Board modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
+        Board board;
         ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
         ShapeType requiredShapeType = requestBodyForm.shape.getShapeType();
         List<Point> requiredShapePoints = requestBodyForm.shape.getPoints();
         Shape requiredShape = shapeFactory.createShape(requiredShapeType, requiredShapePoints);
         int indexOfShape = requestBodyForm.shape.getIndexInBoard();
         Project project = Project.getProject();
+        if (project.getBoards().isEmpty()) {
+            board = new Board();
+        } else {
+            board = new Board();
+            board.setShapes(project.getBoards().get(project.getBoards().size() - 1).getShapes());
+        }
         switch (requestBodyForm.operation) {
-            case CREATE:
+            case CREATE -> {
                 board.addShape(requiredShape);
                 project.saveBoard(board);
-                break;
-            case MOVE:
-            case RESIZE:
-            case COLOUR:
+            }
+            case MOVE, RESIZE, COLOUR -> {
                 board.getShapes().set(indexOfShape, requiredShape);
                 project.saveBoard(board);
-                break;
-            case DELETE:
+            }
+            case DELETE -> {
                 board.getShapes().set(indexOfShape, null);
                 project.saveBoard(board);
-                break;
+            }
         }
         return board;
     }
-
-
-
-
-
-
 }

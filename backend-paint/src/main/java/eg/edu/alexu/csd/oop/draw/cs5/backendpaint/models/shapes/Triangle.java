@@ -10,18 +10,4 @@ public class Triangle extends Shape{
         this.shapeType = ShapeType.TRIANGLE;
     }
 
-    @Override
-    void editShape() {
-
-    }
-
-    @Override
-    void deleteShape() {
-
-    }
-
-    @Override
-    void colourShape() {
-
-    }
 }

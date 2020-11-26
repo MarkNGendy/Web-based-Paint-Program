@@ -27,20 +27,6 @@ public class Ellipse extends Shape{
         this.hRadius = hRadius;
     }
 
-    @Override
-    void editShape() {
-
-    }
-
-    @Override
-    void deleteShape() {
-
-    }
-
-    @Override
-    void colourShape() {
-
-    }
 
     double distBetTwoPoints (Point a, Point b) {
         return Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2));

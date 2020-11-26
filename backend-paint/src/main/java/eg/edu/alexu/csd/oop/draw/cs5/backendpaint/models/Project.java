@@ -12,6 +12,10 @@ public class Project {
         boards = new ArrayList<>();
     }
 
+    public List<Board> getBoards() {
+        return boards;
+    }
+
     public static Project getProject() {
         if (project == null) {
             project = new Project();

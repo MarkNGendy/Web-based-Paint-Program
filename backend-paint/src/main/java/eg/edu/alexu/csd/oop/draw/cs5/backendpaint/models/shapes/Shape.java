@@ -7,8 +7,6 @@ public abstract class Shape {
 
     List<Point> points;
     ShapeType shapeType;
-    String colour;
-    int indexInBoard;
 
     public Shape(List<Point> points, ShapeType shapeType) {
         this.points = points;
@@ -19,17 +17,17 @@ public abstract class Shape {
     public List<Point> getPoints() {
         return points;
     }
-    
+
     public ShapeType getShapeType() {
         return shapeType;
     }
 
 
-    public int getIndexInBoard() {
-        return indexInBoard;
-    }
+//    public int getIndexInBoard() {
+//        return indexInBoard;
+//    }
 
-    public void setIndexInBoard(int indexInBoard) {
-        this.indexInBoard = indexInBoard;
-    }
+//    public void setIndexInBoard(int indexInBoard) {
+//        this.indexInBoard = indexInBoard;
+//    }
 }

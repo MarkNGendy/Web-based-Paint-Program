@@ -18,18 +18,5 @@ public class Rectangle extends Shape{
         points.add(3, vertices.get(1));
     }
 
-    @Override
-    void editShape() {
 
-    }
-
-    @Override
-    void delete() {
-
-    }
-
-    @Override
-    void colourShape() {
-
-    }
 }

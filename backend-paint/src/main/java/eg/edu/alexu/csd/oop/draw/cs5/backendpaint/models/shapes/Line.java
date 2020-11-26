@@ -12,13 +12,4 @@ public class Line extends Shape{
         this.shapeType = ShapeType.LINE;
     }
 
-    @Override
-    void editShape() {
-
-    }
-
-    @Override
-    void colourShape() {
-
-    }
 }
