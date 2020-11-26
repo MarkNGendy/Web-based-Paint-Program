@@ -22,6 +22,10 @@ public abstract class Shape {
         return shapeType;
     }
 
+    abstract void move();
+
+    abstract void resize();
+
     abstract void delete();
     abstract void colourShape();
 }

@@ -12,6 +12,16 @@ public class Triangle extends Shape{
     }
 
     @Override
+    void move() {
+
+    }
+
+    @Override
+    void resize() {
+
+    }
+
+    @Override
     void delete() {
 
     }
