@@ -4,30 +4,10 @@ import java.util.List;
 
 public class Triangle extends Shape{
 
-
     public Triangle(List<Point> vertices) {
         super(vertices, ShapeType.TRIANGLE);
         points = vertices;
         this.shapeType = ShapeType.TRIANGLE;
     }
 
-    @Override
-    void move() {
-
-    }
-
-    @Override
-    void resize() {
-
-    }
-
-    @Override
-    void delete() {
-
-    }
-
-    @Override
-    void colourShape() {
-
-    }
 }

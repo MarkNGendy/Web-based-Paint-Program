@@ -19,23 +19,4 @@ public class Rectangle extends Shape{
     }
 
 
-    @Override
-    void move() {
-
-    }
-
-    @Override
-    void resize() {
-
-    }
-
-    @Override
-    void delete() {
-
-    }
-
-    @Override
-    void colourShape() {
-
-    }
 }

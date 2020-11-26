@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.List;
 
 public abstract class Shape {
+
     List<Point> points;
     ShapeType shapeType;
 
@@ -17,15 +18,16 @@ public abstract class Shape {
         return points;
     }
 
-
     public ShapeType getShapeType() {
         return shapeType;
     }
 
-    abstract void move();
 
-    abstract void resize();
+//    public int getIndexInBoard() {
+//        return indexInBoard;
+//    }
 
-    abstract void delete();
-    abstract void colourShape();
+//    public void setIndexInBoard(int indexInBoard) {
+//        this.indexInBoard = indexInBoard;
+//    }
 }

@@ -6,17 +6,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Board {
+
     List<Shape> shapes;
 
-    public Board(Board board) {
+    public Board() {
         shapes = new ArrayList<>();
-        shapes = board.shapes;
+    }
+
+    public List<Shape> getShapes() {
+        return shapes;
+    }
+
+    public void setShapes(List<Shape> shapes) {
+        this.shapes = shapes;
     }
 
     public void addShape (Shape shape) {
         shapes.add(shape);
+//        shape.setIndexInBoard(shapes.size() - 1);
     }
-
-
 
 }
