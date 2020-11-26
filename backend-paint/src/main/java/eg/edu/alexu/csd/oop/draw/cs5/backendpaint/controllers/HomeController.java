@@ -27,10 +27,4 @@ public class HomeController {
         board.addShape(addedShape);
         return board;
     }
-
-
-
-
-
-
 }

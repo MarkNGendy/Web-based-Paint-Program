@@ -2,13 +2,14 @@ package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models;
 
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.Shape;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Board {
-    LinkedList<Shape> shapes;
+    List<Shape> shapes;
 
     public Board(Board board) {
-        shapes = new LinkedList<>();
+        shapes = new ArrayList<>();
         shapes = board.shapes;
     }
 

@@ -3,7 +3,6 @@ package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.*;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.Rectangle;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.Shape;
-
 import java.awt.*;
 import java.util.List;
 
