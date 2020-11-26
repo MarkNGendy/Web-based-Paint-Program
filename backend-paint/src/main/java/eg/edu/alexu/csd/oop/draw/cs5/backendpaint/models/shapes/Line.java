@@ -7,6 +7,7 @@ public class Line extends Shape{
 
 
     public Line(List<Point> vertices) {
+        super(vertices , ShapeType.LINE);
         points = vertices;
         this.shapeType = ShapeType.LINE;
     }
