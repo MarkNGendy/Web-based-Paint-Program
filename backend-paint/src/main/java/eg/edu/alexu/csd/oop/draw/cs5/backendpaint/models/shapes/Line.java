@@ -13,7 +13,7 @@ public class Line extends Shape{
     }
 
     @Override
-    void delete() {
+    void editShape() {
 
     }
 

@@ -4,7 +4,6 @@ import java.util.List;
 
 public class Triangle extends Shape{
 
-
     public Triangle(List<Point> vertices) {
         super(vertices, ShapeType.TRIANGLE);
         points = vertices;
@@ -12,17 +11,12 @@ public class Triangle extends Shape{
     }
 
     @Override
-    void move() {
+    void editShape() {
 
     }
 
     @Override
-    void resize() {
-
-    }
-
-    @Override
-    void delete() {
+    void deleteShape() {
 
     }
 

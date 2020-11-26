@@ -18,13 +18,15 @@ import java.util.List;
 public class HomeController {
 
     @PostMapping("/shapes/add")
-    Board modifyBoard(@RequestBody RequestBodyForm requestBodyForm) {
-        Board board = new Board(requestBodyForm.board);
-        ShapeFactory shapeFactory = new ShapeFactory();
+    Board addShape(@RequestBody RequestBodyForm requestBodyForm) {
+        Board board = Board.getBoard();
+        ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
         ShapeType addedShapeType = requestBodyForm.shape.getShapeType();
         List<Point> addedShapePoints = requestBodyForm.shape.getPoints();
         Shape addedShape = shapeFactory.createShape(addedShapeType, addedShapePoints);
         board.addShape(addedShape);
         return board;
     }
+
+
 }

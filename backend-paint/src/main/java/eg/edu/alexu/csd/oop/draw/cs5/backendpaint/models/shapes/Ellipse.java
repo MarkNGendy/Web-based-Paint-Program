@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Ellipse extends Shape{
 
-    double vDiameter;
-    double hDiameter;
+    double vRadius;
+    double hRadius;
 
     public Ellipse(List<Point> vertices) {
         super(vertices, ShapeType.ELLIPSE);
@@ -14,31 +14,26 @@ public class Ellipse extends Shape{
         //shapePoints[0] Center
         //shapePoints[1] vertical
         // shapePoints[2] horizontal
-        setvDiameter(distBetTwoPoints(points.get(0), points.get(1)));
-        sethDiameter(distBetTwoPoints(points.get(0), points.get(2)));
+        setvRadius(distBetTwoPoints(points.get(0), points.get(1)));
+        sethRadius(distBetTwoPoints(points.get(0), points.get(2)));
         this.shapeType = ShapeType.ELLIPSE;
     }
 
-    public void setvDiameter(double vDiameter) {
-        this.vDiameter = vDiameter;
+    public void setvRadius(double vRadius) {
+        this.vRadius = vRadius;
     }
 
-    public void sethDiameter(double hDiameter) {
-        this.hDiameter = hDiameter;
-    }
-
-    @Override
-    void move() {
-
+    public void sethRadius(double hRadius) {
+        this.hRadius = hRadius;
     }
 
     @Override
-    void resize() {
+    void editShape() {
 
     }
 
     @Override
-    void delete() {
+    void deleteShape() {
 
     }
 

@@ -18,14 +18,8 @@ public class Rectangle extends Shape{
         points.add(3, vertices.get(1));
     }
 
-
     @Override
-    void move() {
-
-    }
-
-    @Override
-    void resize() {
+    void editShape() {
 
     }
 
