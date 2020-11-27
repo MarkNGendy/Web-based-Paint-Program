@@ -23,7 +23,7 @@ public class Board {
 
     public void addShape (Shape shape) {
         shapes.add(shape);
-//        shape.setIndexInBoard(shapes.size() - 1);
+        shape.setIndexInBoard(shapes.size() - 1);
     }
 
 }
