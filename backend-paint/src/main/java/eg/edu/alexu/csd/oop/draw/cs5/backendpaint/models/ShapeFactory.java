@@ -7,13 +7,17 @@ import java.awt.*;
 import java.util.List;
 
 public class ShapeFactory {
+    public enum ShapeType {
+        SQUARE, RECTANGLE, TRIANGLE, ELLIPSE, CIRCLE, LINE;
+    }
 
     private static ShapeFactory shapeFactory;
+
     private ShapeFactory() {
 
     }
 
-    public static ShapeFactory getShapeFactory () {
+    public static ShapeFactory getShapeFactory() {
         if (shapeFactory == null) {
             shapeFactory = new ShapeFactory();
         }
@@ -21,13 +25,20 @@ public class ShapeFactory {
     }
 
     public Shape createShape(ShapeType shapeType, List<Point> vertices) {
-        return switch (shapeType) {
-            case LINE -> new Line(vertices);
-            case CIRCLE -> new Circle(vertices);
-            case SQUARE -> new Square(vertices);
-            case ELLIPSE -> new Ellipse(vertices);
-            case TRIANGLE -> new Triangle(vertices);
-            case RECTANGLE -> new Rectangle(vertices);
-        };
+        switch (shapeType) {
+            case LINE:
+                return new Line(vertices);
+            case CIRCLE:
+                return new Circle(vertices);
+            case SQUARE:
+                return new Square(vertices);
+            case ELLIPSE:
+                return new Ellipse(vertices);
+            case TRIANGLE:
+                return new Triangle(vertices);
+            case RECTANGLE:
+                return new Rectangle(vertices);
+        }
+        return null;
     }
 }

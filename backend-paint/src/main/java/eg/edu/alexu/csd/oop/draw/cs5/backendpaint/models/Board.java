@@ -21,9 +21,16 @@ public class Board {
         this.shapes = shapes;
     }
 
-    public void addShape (Shape shape) {
+    public void addShape(Shape shape) {
         shapes.add(shape);
-//        shape.setIndexInBoard(shapes.size() - 1);
+        // shape.setIndexInBoard(shapes.size() - 1);
     }
 
+    public void updateShape(int index, shape s) {
+        shapes.set(index, s);
+    }
+
+    public void deleteSahpe(int index) {
+        shapes.set(index, null);
+    }
 }

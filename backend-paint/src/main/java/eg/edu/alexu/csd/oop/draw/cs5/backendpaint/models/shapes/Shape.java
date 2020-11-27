@@ -5,14 +5,15 @@ import java.util.List;
 
 public abstract class Shape {
 
+    int indexInBoard;
     List<Point> points;
     ShapeType shapeType;
 
-    public Shape(List<Point> points, ShapeType shapeType) {
+    protected Shape(List<Point> points, ShapeType shapeType, int index) {
         this.points = points;
         this.shapeType = shapeType;
+        indexInBoard = index;
     }
-
 
     public List<Point> getPoints() {
         return points;
@@ -22,12 +23,11 @@ public abstract class Shape {
         return shapeType;
     }
 
+    public int getIndexInBoard() {
+        return indexInBoard;
+    }
 
-//    public int getIndexInBoard() {
-//        return indexInBoard;
-//    }
-
-//    public void setIndexInBoard(int indexInBoard) {
-//        this.indexInBoard = indexInBoard;
-//    }
+    // public void setIndexInBoard(int indexInBoard) {
+    // this.indexInBoard = indexInBoard;
+    // }
 }
