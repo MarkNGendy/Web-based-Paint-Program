@@ -34,18 +34,19 @@ public class HomeController {
             board.setShapes(saveManager.getBoards().get(saveManager.getBoards().size() - 1).getShapes());
         }
         switch (requestBodyForm.operation) {
-            case CREATE -> {
+            case CREATE:
+            case COPY:
                 board.addShape(requiredShape);
                 saveManager.saveBoard(board);
-            }
-            case MOVE, RESIZE, COLOUR -> {
+                break;
+            case UPDATE:
                 board.getShapes().set(indexOfShape, requiredShape);
                 saveManager.saveBoard(board);
-            }
-            case DELETE -> {
+                break;
+            case DELETE:
                 board.getShapes().set(indexOfShape, null);
                 saveManager.saveBoard(board);
-            }
+                break;
         }
         return board;
     }
