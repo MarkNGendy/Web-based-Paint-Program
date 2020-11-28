@@ -17,6 +17,7 @@
             <button class="triangle"></button>
             <button class="ellipse"></button>
             <button class="line"></button>
+            <button class="freeDraw" @click="startFreeDraw"></button>
         </div>
         <div>
             <button class="move"></button>
@@ -24,10 +25,17 @@
             <button class="resize"></button>
         </div>
         <label class="label">select the color:</label>
-        <input type="color" />
-        <span>{{ X }}, {{ y }}</span>
+        <input type="color">
+        <label class="label">{{ x }}, {{ y }}</label>
         <canvas
+            id="myCanvas"
+            width="1500"
+            height="800"
             class="drawing-board"
+            @mousedown="beginDrawing"
+            @mouseup="stopDrawing"
+            @mousemove ="draw"
+            
         ></canvas>
     </div>
 </template>
@@ -44,18 +52,27 @@ export default {
             points: null,
             canvas: null,
             x: 0,
-            y: 0
+            y: 0,
+            isDrawing: false,
+            free: false
         };
+    },
+    mounted(){
+        var c = document.getElementById("myCanvas");
+        this.canvas = c.getContext('2d');
     },
     methods: {
         showCoordinates(e) {
             this.x = e.offsetX;
             this.y = e.offsetY;
         },
+        startFreeDraw(){
+            this.free=true;
+        },
         printX() {
             console.log(this.x);
         },
-        drawLine(x1, x2, y1, y2) {
+        drawLine(x1, y1, x2, y2) {
             let ctx = this.canvas;
             ctx.beginPath();
             ctx.strokeStyle = "black";
@@ -65,15 +82,19 @@ export default {
             ctx.stroke();
             ctx.closePath();
         },
-        beginDrawing(e) {
+        draw(e) {
+            if(this.isDrawing) {
+            this.drawLine(this.x, this.y, e.offsetX, e.offsetY);
             this.x = e.offsetX;
             this.y = e.offsetY;
-            this.isDrawing = true;
-        },
-        keepDrawing(e) {
-            if (this.isDrawing === true) {
-              this.drawLine(this.x, this.y, e.offsetX, e.offsetY);
             }
+        },
+        beginDrawing(e) {
+            if(this.free){
+                this.x = e.offsetX;
+                this.y = e.offsetY;
+                this.isDrawing = true;
+                }
         },
         stopDrawing(e) {
             if (this.isDrawing) {
@@ -82,7 +103,7 @@ export default {
                 this.y = 0;
                 this.isDrawing = false;
             }
-        }
+        },
     }
 };
 </script>
@@ -168,6 +189,18 @@ export default {
 .line:hover {
     background-image: url("./line\ hov.png");
 }
+.freeDraw {
+    height: 40px;
+    width: 40px;
+    background-image: url("./free.png");
+    background-size: cover;
+    border: none;
+    margin: 2px;
+    cursor: pointer;
+}
+.freeDraw:hover {
+    background-image: url("./free\ hov.png");
+}
 .move {
     height: 40px;
     width: 40px;
@@ -234,8 +267,6 @@ label {
 .drawing-board {
     cursor: crosshair;
     background-color: rgb(255, 255, 255);
-    height: 80%;
-    width: 80%;
     position: relative;
     display: block;
     margin: auto;
