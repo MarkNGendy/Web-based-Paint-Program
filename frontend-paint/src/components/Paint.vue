@@ -25,11 +25,11 @@
             <button class="resize"></button>
         </div>
         <label class="label">select the fill color:</label>
-        <input type="color" id="myColor">
+        <input type="color" id="myColor" />
         <label class="label">select the stroke color:</label>
-        <input type="color" id="myStroke">
+        <input type="color" id="myStroke" />
         <label class="label">stroke width</label>
-        <input type="number" id="strokeWidth" min="0" max="5">
+        <input type="number" id="strokeWidth" min="0" max="5" />
         <canvas
             id="myCanvas"
             width="1500"
@@ -38,13 +38,12 @@
             @mousedown="beginDrawing"
             @mouseup="stopDrawing"
             @mousemove="draw"
-            
         ></canvas>
     </div>
 </template>
 
 <script>
-// import axios from "axios";
+import axios from "axios";
 export default {
     name: "Paint",
     props: {
@@ -54,13 +53,15 @@ export default {
         return {
             shapes: [null],
             shapeStruct: {
-                ShapeType:'null',
-                indexInBoard:'-1',
                 points: [null],
-                colour: 'null'
+                shapeType: "null",
+                colour: "null",
+                indexInBoard: "-1",
+                stroke: "null",
+                strokeWidth: "null"
             },
+            operation: "null",
             numOfShapes: 0,
-            points: null,
             canvas: null,
             x: 0,
             y: 0,
@@ -69,24 +70,24 @@ export default {
             shape: null
         };
     },
-    mounted(){
+    mounted() {
         var c = document.getElementById("myCanvas");
-        this.canvas = c.getContext('2d');
+        this.canvas = c.getContext("2d");
     },
     methods: {
         showCoordinates(e) {
             this.x = e.offsetX;
             this.y = e.offsetY;
         },
-        startFreeDraw(){
-            this.free=true;
+        startFreeDraw() {
+            this.free = true;
         },
         drawLine(x1, y1, x2, y2) {
             let ctx = this.canvas;
             var stroke = document.getElementById("myStroke");
             var stWidth = document.getElementById("strokeWidth");
             ctx.beginPath();
-            ctx.lineWidth = stWidth.value!=0?stWidth.value:1 ;
+            ctx.lineWidth = stWidth.value != 0 ? stWidth.value : 1;
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
             ctx.strokeStyle = stroke.value;
@@ -94,18 +95,18 @@ export default {
             ctx.closePath();
         },
         draw(e) {
-            if(this.isDrawing) {
-            this.drawLine(this.x, this.y, e.offsetX, e.offsetY);
-            this.x = e.offsetX;
-            this.y = e.offsetY;
+            if (this.isDrawing) {
+                this.drawLine(this.x, this.y, e.offsetX, e.offsetY);
+                this.x = e.offsetX;
+                this.y = e.offsetY;
             }
         },
         beginDrawing(e) {
             this.x = e.offsetX;
             this.y = e.offsetY;
-            if(this.free){
+            if (this.free) {
                 this.isDrawing = true;
-                }
+            }
         },
         stopDrawing(e) {
             if (this.isDrawing && this.free) {
@@ -113,105 +114,155 @@ export default {
                 this.x = 0;
                 this.y = 0;
                 this.isDrawing = false;
-            }
-            else{
-                var x2= e.offsetX;
-                var y2= e.offsetY;
+            } else {
+                var x2 = e.offsetX;
+                var y2 = e.offsetY;
                 var canvas = document.getElementById("myCanvas");
                 var color = document.getElementById("myColor");
                 var stroke = document.getElementById("myStroke");
                 var stWidth = document.getElementById("strokeWidth");
-                if(canvas.getContext){
+                if (canvas.getContext) {
                     var ctx = canvas.getContext("2d");
                     ctx.fillStyle = color.value;
                     ctx.strokeStyle = stroke.value;
-                    var bigger = Math.abs(x2 - this.x) > Math.abs(y2 - this.y) ? x2 - this.x : y2 - this.y;
-                    switch(this.shape){
-                        case 'rectangle':
-                            ctx.fillRect(this.x,this.y,x2-this.x,y2-this.y);
-                            if(stWidth.value>0){
+                    var bigger =
+                        Math.abs(x2 - this.x) > Math.abs(y2 - this.y)
+                            ? x2 - this.x
+                            : y2 - this.y;
+                    switch (this.shape) {
+                        case "rectangle":
+                            ctx.fillRect(
+                                this.x,
+                                this.y,
+                                x2 - this.x,
+                                y2 - this.y
+                            );
+                            if (stWidth.value > 0) {
                                 ctx.lineWidth = stWidth.value;
-                                ctx.strokeRect(this.x,this.y,x2-this.x,y2-this.y);
+                                ctx.strokeRect(
+                                    this.x,
+                                    this.y,
+                                    x2 - this.x,
+                                    y2 - this.y
+                                );
                             }
+                            this.shapeStruct.shapeType = "RECTANGLE";
                             break;
-                        case 'square':
-                            ctx.fillRect(this.x,this.y,bigger,bigger);
-                            if(stWidth.value>0){
+                        case "square":
+                            ctx.fillRect(this.x, this.y, bigger, bigger);
+                            if (stWidth.value > 0) {
                                 ctx.lineWidth = stWidth.value;
-                                ctx.strokeRect(this.x,this.y,bigger,bigger);
+                                ctx.strokeRect(this.x, this.y, bigger, bigger);
                             }
+                            this.shapeStruct.shapeType = "SQUARE";
                             break;
-                        case 'circle':
+                        case "circle":
                             ctx.beginPath();
                             ctx.arc(this.x, this.y, bigger, 0, 2 * Math.PI);
                             ctx.fill();
-                            if(stWidth.value>0){
+                            if (stWidth.value > 0) {
                                 ctx.lineWidth = stWidth.value;
                                 ctx.stroke();
                             }
+                            this.shapeStruct.shapeType = "CIRCLE";
                             break;
-                        case 'triangle':
+                        case "triangle":
                             ctx.beginPath();
-                            ctx.moveTo(this.x,this.y);
-                            ctx.lineTo(x2,this.y);
-                            ctx.lineTo((this.x+x2)/2, y2);
-                            ctx.lineTo(this.x,this.y);
+                            ctx.moveTo(this.x, this.y);
+                            ctx.lineTo(x2, this.y);
+                            ctx.lineTo((this.x + x2) / 2, y2);
+                            ctx.lineTo(this.x, this.y);
                             ctx.fill();
-                            if(stWidth.value>0){
+                            if (stWidth.value > 0) {
                                 ctx.lineWidth = stWidth.value;
                                 ctx.stroke();
                             }
+                            this.shapeStruct.shapeType = "TRIANGLE";
                             break;
-                        case 'ellipse':
+                        case "ellipse":
                             ctx.beginPath();
-                            ctx.ellipse(this.x, this.y, bigger, bigger/2, 0, 0, 2 * Math.PI);
+                            ctx.ellipse(
+                                this.x,
+                                this.y,
+                                bigger,
+                                bigger / 2,
+                                0,
+                                0,
+                                2 * Math.PI
+                            );
                             ctx.fill();
-                            if(stWidth.value>0){
+                            if (stWidth.value > 0) {
                                 ctx.lineWidth = stWidth.value;
                                 ctx.stroke();
                             }
+                            this.shapeStruct.shapeType = "ELLIPSE";
                             break;
-                        case 'line':
+                        case "line":
                             ctx.beginPath();
                             ctx.moveTo(this.x, this.y);
                             ctx.lineTo(x2, y2);
                             ctx.stroke();
+                            this.shapeStruct.shapeType = "LINE";
                             break;
                         default:
                     }
+                    this.shapeStruct.points = [
+                        {
+                            x: this.x,
+                            y: this.y
+                        },
+                        {
+                            x: x2,
+                            y: y2
+                        }
+                    ];
+                    this.shapeStruct.colour = color.value;
+                    this.shapeStruct.stroke = stroke.value;
+                    this.shapeStruct.strokeWidth = stWidth.value;
+                    this.shapeStruct.indexInBoard = this.numOfShapes;
+                    this.numOfShapes++;
+                    this.shapes.push(this.shapeStruct);
+                    this.operation = "CREATE";
+                    this.sendRequest();
                 }
             }
         },
-        setRectangle(){
-            this.shape='rectangle';
+        async sendRequest() {
+            const response = await axios.post("http://localhost:8095/shapes/", {
+                shape: this.shapeStruct,
+                operation: "CREATE"
+            });
+            console.log(response.data);
+        },
+        setRectangle() {
+            this.shape = "rectangle";
             this.free = false;
         },
-        setSquare(){
-            this.shape= 'square'
-            this.free= false;
+        setSquare() {
+            this.shape = "square";
+            this.free = false;
         },
-        setCircle(){
-            this.shape= 'circle'
-            this.free= false;
+        setCircle() {
+            this.shape = "circle";
+            this.free = false;
         },
-        setLine(){
-            this.shape= 'line'
-            this.free= false;
+        setLine() {
+            this.shape = "line";
+            this.free = false;
         },
-        setEllipse(){
-            this.shape= 'ellipse'
-            this.free= false;
+        setEllipse() {
+            this.shape = "ellipse";
+            this.free = false;
         },
-        setTriangle(){
-            this.shape= 'triangle'
-            this.free= false;
+        setTriangle() {
+            this.shape = "triangle";
+            this.free = false;
         },
-        clear(){
+        clear() {
             var canvas = document.getElementById("myCanvas");
-            var context = canvas.getContext('2d');
+            var context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
         }
-        
     }
 };
 </script>

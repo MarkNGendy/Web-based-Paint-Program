@@ -22,8 +22,8 @@ public class Board {
     }
 
     public void addShape (Shape shape) {
+        shape.setIndexInBoard(shapes.size());
         shapes.add(shape);
-        shape.setIndexInBoard(shapes.size() - 1);
     }
 
 }

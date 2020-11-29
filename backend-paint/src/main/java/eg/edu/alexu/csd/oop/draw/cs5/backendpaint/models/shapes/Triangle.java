@@ -4,10 +4,8 @@ import java.util.List;
 
 public class Triangle extends Shape{
 
-    public Triangle(List<Point> vertices) {
-        super(vertices, ShapeType.TRIANGLE);
-        points = vertices;
-        this.shapeType = ShapeType.TRIANGLE;
-    }
 
+    public Triangle(List<Point> points, ShapeType shapeType) {
+        super(points, shapeType);
+    }
 }

@@ -22,12 +22,12 @@ public class ShapeFactory {
 
     public Shape createShape(ShapeType shapeType, List<Point> vertices) {
         return switch (shapeType) {
-            case LINE -> new Line(vertices);
-            case CIRCLE -> new Circle(vertices);
-            case SQUARE -> new Square(vertices);
-            case ELLIPSE -> new Ellipse(vertices);
-            case TRIANGLE -> new Triangle(vertices);
-            case RECTANGLE -> new Rectangle(vertices);
+            case LINE -> new Line(vertices, shapeType);
+            case CIRCLE -> new Circle(vertices, shapeType);
+            case SQUARE -> new Square(vertices, shapeType);
+            case ELLIPSE -> new Ellipse(vertices, shapeType);
+            case TRIANGLE -> new Triangle(vertices, shapeType);
+            case RECTANGLE -> new Rectangle(vertices, shapeType);
         };
     }
 }

@@ -16,7 +16,7 @@ public class SaveManager {
         return boards;
     }
 
-    public static SaveManager getProject() {
+    public static SaveManager getSaveManager() {
         if (saveManager == null) {
             saveManager = new SaveManager();
         }

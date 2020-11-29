@@ -4,6 +4,7 @@ package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.controllers;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Board;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.SaveManager;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.ShapeFactory;
+import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.Line;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.Shape;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.ShapeType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,11 +23,21 @@ public class HomeController {
     Board modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
         Board board;
         ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
-        ShapeType requiredShapeType = requestBodyForm.shape.getShapeType();
-        List<Point> requiredShapePoints = requestBodyForm.shape.getPoints();
-        Shape requiredShape = shapeFactory.createShape(requiredShapeType, requiredShapePoints);
+        ShapeType reqShapeType = requestBodyForm.shape.getShapeType();
+        List<Point> reqShapePoints = requestBodyForm.shape.getPoints();
+        String reqShapeColour = (requestBodyForm.shape.getColour());
+        String reqShapeStroke = (requestBodyForm.shape.getStroke());
+        String reqShapeStWidth = (requestBodyForm.shape.getStrokeWidth());
         int indexOfShape = requestBodyForm.shape.getIndexInBoard();
-        SaveManager saveManager = SaveManager.getProject();
+        Shape requiredShape = shapeFactory.createShape(reqShapeType, reqShapePoints);
+        requiredShape.setColour(reqShapeColour);
+        System.out.println(reqShapeColour);
+        requiredShape.setStrokeWidth(reqShapeStWidth);
+        System.out.println(reqShapeStWidth);
+        requiredShape.setStroke(reqShapeStroke);
+        System.out.println(reqShapeStroke);
+        requiredShape.setIndexInBoard(indexOfShape);
+        SaveManager saveManager = SaveManager.getSaveManager();
         if (saveManager.getBoards().isEmpty()) {
             board = new Board();
         } else {
@@ -37,17 +48,15 @@ public class HomeController {
             case CREATE:
             case COPY:
                 board.addShape(requiredShape);
-                saveManager.saveBoard(board);
                 break;
             case UPDATE:
                 board.getShapes().set(indexOfShape, requiredShape);
-                saveManager.saveBoard(board);
                 break;
             case DELETE:
                 board.getShapes().set(indexOfShape, null);
-                saveManager.saveBoard(board);
                 break;
         }
+        saveManager.saveBoard(board);
         return board;
     }
 }
