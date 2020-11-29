@@ -8,7 +8,7 @@
             <button class="opt">Redo</button>
             <button class="opt">Save</button>
             <button class="opt">Load</button>
-            <button class="opt">Clear</button>
+            <button class="opt" @click="clear">Clear</button>
         </div>
         <div class="shapes">
             <button class="square" @click="setSquare"></button>
@@ -169,6 +169,11 @@ export default {
         setTriangle(){
             this.shape= 'triangle'
             this.free= false;
+        },
+        clear(){
+            var canvas = document.getElementById("myCanvas");
+            var context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
         }
         
     }
