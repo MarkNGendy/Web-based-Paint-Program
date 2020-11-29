@@ -34,7 +34,7 @@
             class="drawing-board"
             @mousedown="beginDrawing"
             @mouseup="stopDrawing"
-            @mousemove ="draw"
+            @mousemove="draw"
             
         ></canvas>
     </div>
