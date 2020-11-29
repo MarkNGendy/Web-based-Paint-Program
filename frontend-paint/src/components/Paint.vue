@@ -49,6 +49,14 @@ export default {
     },
     data() {
         return {
+            shapes: [null],
+            shapeStruct: {
+                ShapeType:'null',
+                indexInBoard:'-1',
+                points: [null],
+                colour: 'null'
+            },
+            numOfShapes: 0,
             points: null,
             canvas: null,
             x: 0,
@@ -110,7 +118,7 @@ export default {
                 var canvas = document.getElementById("myCanvas");
                 if(canvas.getContext){
                     var ctx = canvas.getContext("2d");
-                    var bigger = x2-this.x>y2-this.y ? x2-this.x : y2-this.y;
+                    var bigger = Math.abs(x2 - this.x) > Math.abs(y2 - this.y) ? x2 - this.x : y2 - this.y;
                     switch(this.shape){
                         case 'rectangle':
                             ctx.fillRect(this.x,this.y,x2-this.x,y2-this.y);
