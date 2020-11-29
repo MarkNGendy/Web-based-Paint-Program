@@ -24,9 +24,12 @@
             <button class="delete"></button>
             <button class="resize"></button>
         </div>
-        <label class="label">select the color:</label>
-        <input type="color">
-        <label class="label">{{ x }}, {{ y }}</label>
+        <label class="label">select the fill color:</label>
+        <input type="color" id="myColor">
+        <label class="label">select the stroke color:</label>
+        <input type="color" id="myStroke">
+        <label class="label">stroke width</label>
+        <input type="number" id="strokeWidth" min="0" max="5">
         <canvas
             id="myCanvas"
             width="1500"
@@ -78,16 +81,15 @@ export default {
         startFreeDraw(){
             this.free=true;
         },
-        printX() {
-            console.log(this.x);
-        },
         drawLine(x1, y1, x2, y2) {
             let ctx = this.canvas;
+            var stroke = document.getElementById("myStroke");
+            var stWidth = document.getElementById("strokeWidth");
             ctx.beginPath();
-            ctx.strokeStyle = "black";
-            ctx.lineWidth = 1;
+            ctx.lineWidth = stWidth.value!=0?stWidth.value:1 ;
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
+            ctx.strokeStyle = stroke.value;
             ctx.stroke();
             ctx.closePath();
         },
@@ -116,32 +118,58 @@ export default {
                 var x2= e.offsetX;
                 var y2= e.offsetY;
                 var canvas = document.getElementById("myCanvas");
+                var color = document.getElementById("myColor");
+                var stroke = document.getElementById("myStroke");
+                var stWidth = document.getElementById("strokeWidth");
                 if(canvas.getContext){
                     var ctx = canvas.getContext("2d");
+                    ctx.fillStyle = color.value;
+                    ctx.strokeStyle = stroke.value;
                     var bigger = Math.abs(x2 - this.x) > Math.abs(y2 - this.y) ? x2 - this.x : y2 - this.y;
                     switch(this.shape){
                         case 'rectangle':
                             ctx.fillRect(this.x,this.y,x2-this.x,y2-this.y);
+                            if(stWidth.value>0){
+                                ctx.lineWidth = stWidth.value;
+                                ctx.strokeRect(this.x,this.y,x2-this.x,y2-this.y);
+                            }
                             break;
                         case 'square':
                             ctx.fillRect(this.x,this.y,bigger,bigger);
+                            if(stWidth.value>0){
+                                ctx.lineWidth = stWidth.value;
+                                ctx.strokeRect(this.x,this.y,bigger,bigger);
+                            }
                             break;
                         case 'circle':
                             ctx.beginPath();
                             ctx.arc(this.x, this.y, bigger, 0, 2 * Math.PI);
                             ctx.fill();
+                            if(stWidth.value>0){
+                                ctx.lineWidth = stWidth.value;
+                                ctx.stroke();
+                            }
                             break;
                         case 'triangle':
                             ctx.beginPath();
                             ctx.moveTo(this.x,this.y);
                             ctx.lineTo(x2,this.y);
                             ctx.lineTo((this.x+x2)/2, y2);
+                            ctx.lineTo(this.x,this.y);
                             ctx.fill();
+                            if(stWidth.value>0){
+                                ctx.lineWidth = stWidth.value;
+                                ctx.stroke();
+                            }
                             break;
                         case 'ellipse':
                             ctx.beginPath();
                             ctx.ellipse(this.x, this.y, bigger, bigger/2, 0, 0, 2 * Math.PI);
                             ctx.fill();
+                            if(stWidth.value>0){
+                                ctx.lineWidth = stWidth.value;
+                                ctx.stroke();
+                            }
                             break;
                         case 'line':
                             ctx.beginPath();
@@ -343,6 +371,8 @@ export default {
 }
 label {
     color: #ffffff;
+    margin: 8px;
+    margin-left: 20px;
 }
 .drawing-board {
     cursor: crosshair;
