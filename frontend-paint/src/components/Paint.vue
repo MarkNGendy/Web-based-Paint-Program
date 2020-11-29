@@ -8,15 +8,15 @@
             <button class="opt">Redo</button>
             <button class="opt">Save</button>
             <button class="opt">Load</button>
-            <button class="opt">Clear</button>
+            <button class="opt" @click="clear">Clear</button>
         </div>
         <div class="shapes">
-            <button class="square"></button>
-            <button class="rectangle"></button>
-            <button class="circle"></button>
-            <button class="triangle"></button>
-            <button class="ellipse"></button>
-            <button class="line"></button>
+            <button class="square" @click="setSquare"></button>
+            <button class="rectangle" @click="setRectangle"></button>
+            <button class="circle" @click="setCircle"></button>
+            <button class="triangle" @click="setTriangle"></button>
+            <button class="ellipse" @click="setEllipse"></button>
+            <button class="line" @click="setLine"></button>
             <button class="freeDraw" @click="startFreeDraw"></button>
         </div>
         <div>
@@ -54,7 +54,8 @@ export default {
             x: 0,
             y: 0,
             isDrawing: false,
-            free: false
+            free: false,
+            shape: null
         };
     },
     mounted(){
@@ -90,20 +91,91 @@ export default {
             }
         },
         beginDrawing(e) {
+            this.x = e.offsetX;
+            this.y = e.offsetY;
             if(this.free){
-                this.x = e.offsetX;
-                this.y = e.offsetY;
                 this.isDrawing = true;
                 }
         },
         stopDrawing(e) {
-            if (this.isDrawing) {
+            if (this.isDrawing && this.free) {
                 this.drawLine(this.x, this.y, e.offsetX, e.offsetY);
                 this.x = 0;
                 this.y = 0;
                 this.isDrawing = false;
             }
+            else{
+                var x2= e.offsetX;
+                var y2= e.offsetY;
+                var canvas = document.getElementById("myCanvas");
+                if(canvas.getContext){
+                    var ctx = canvas.getContext("2d");
+                    var bigger = x2-this.x>y2-this.y ? x2-this.x : y2-this.y;
+                    switch(this.shape){
+                        case 'rectangle':
+                            ctx.fillRect(this.x,this.y,x2-this.x,y2-this.y);
+                            break;
+                        case 'square':
+                            ctx.fillRect(this.x,this.y,bigger,bigger);
+                            break;
+                        case 'circle':
+                            ctx.beginPath();
+                            ctx.arc(this.x, this.y, bigger, 0, 2 * Math.PI);
+                            ctx.fill();
+                            break;
+                        case 'triangle':
+                            ctx.beginPath();
+                            ctx.moveTo(this.x,this.y);
+                            ctx.lineTo(x2,this.y);
+                            ctx.lineTo((this.x+x2)/2, y2);
+                            ctx.fill();
+                            break;
+                        case 'ellipse':
+                            ctx.beginPath();
+                            ctx.ellipse(this.x, this.y, bigger, bigger/2, 0, 0, 2 * Math.PI);
+                            ctx.fill();
+                            break;
+                        case 'line':
+                            ctx.beginPath();
+                            ctx.moveTo(this.x, this.y);
+                            ctx.lineTo(x2, y2);
+                            ctx.stroke();
+                            break;
+                        default:
+                    }
+                }
+            }
         },
+        setRectangle(){
+            this.shape='rectangle';
+            this.free = false;
+        },
+        setSquare(){
+            this.shape= 'square'
+            this.free= false;
+        },
+        setCircle(){
+            this.shape= 'circle'
+            this.free= false;
+        },
+        setLine(){
+            this.shape= 'line'
+            this.free= false;
+        },
+        setEllipse(){
+            this.shape= 'ellipse'
+            this.free= false;
+        },
+        setTriangle(){
+            this.shape= 'triangle'
+            this.free= false;
+        },
+        clear(){
+            var canvas = document.getElementById("myCanvas");
+            var context = canvas.getContext('2d');
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
     }
 };
 </script>
