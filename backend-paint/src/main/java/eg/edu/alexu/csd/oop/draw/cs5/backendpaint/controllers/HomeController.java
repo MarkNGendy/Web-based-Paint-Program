@@ -17,7 +17,6 @@ import java.util.List;
 @RestController
 @CrossOrigin
 public class HomeController {
-
     @PostMapping("/shapes/")
     List<ShapeDTO> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
         Board board;
@@ -53,7 +52,9 @@ public class HomeController {
                 break;
         }
         saveManager.saveBoard(board);
+        saveManager.save("test" , "C:\\Users\\Dell\\Desktop\\t\\test2.json");
         return shapeToShapeDTO(board);
+
     }
 
 
