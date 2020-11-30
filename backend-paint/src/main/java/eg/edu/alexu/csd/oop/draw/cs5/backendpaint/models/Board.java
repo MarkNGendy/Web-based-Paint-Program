@@ -19,7 +19,8 @@ public class Board {
     }
 
     public void setShapes(List<Shape> shapes) {
-        this.shapes = shapes;
+        this.shapes = new ArrayList<>();
+        this.shapes.addAll(shapes);
     }
 
     public void addShape (Shape shape) {
