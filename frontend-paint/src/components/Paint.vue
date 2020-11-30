@@ -58,7 +58,13 @@ export default {
                 colour: "null",
                 indexInBoard: "-1",
                 stroke: "null",
-                strokeWidth: "null"
+                strokeWidth: "null",
+                length: "null",
+                width: "null",
+                sideLength: "null",
+                hRadius: "null",
+                vRadius: "null",
+                radius: "null"
             },
             operation: "null",
             numOfShapes: 0,
