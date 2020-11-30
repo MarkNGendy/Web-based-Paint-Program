@@ -19,7 +19,7 @@ import java.util.List;
 public class HomeController {
 
     @PostMapping("/shapes/")
-    List<ShapeDTO> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
+    List<Board> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
         Board board;
         ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
         ShapeType reqShapeType = requestBodyForm.shape.getShapeType();
@@ -53,7 +53,8 @@ public class HomeController {
                 break;
         }
         saveManager.saveBoard(board);
-        return shapeToShapeDTO(board);
+//        return shapeToShapeDTO(board);
+        return saveManager.getBoards();
     }
 
 

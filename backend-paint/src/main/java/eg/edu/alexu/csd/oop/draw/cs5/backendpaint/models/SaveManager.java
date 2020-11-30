@@ -6,7 +6,7 @@ import java.util.List;
 public class SaveManager {
 
     private static SaveManager saveManager;
-    List<Board> boards;
+    private static List<Board> boards;
 
     private SaveManager() {
         boards = new ArrayList<>();
@@ -24,6 +24,8 @@ public class SaveManager {
     }
 
     public void saveBoard(Board board) {
-        boards.add(board);
+        Board savedBoard = new Board();
+        savedBoard.setShapes(board.getShapes());
+        boards.add(savedBoard);
     }
 }
