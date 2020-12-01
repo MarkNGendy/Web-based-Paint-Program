@@ -17,7 +17,6 @@
             <button class="triangle" @click="setTriangle"></button>
             <button class="ellipse" @click="setEllipse"></button>
             <button class="line" @click="setLine"></button>
-            <button class="freeDraw" @click="startFreeDraw"></button>
             <button @click="drawShapes">draw</button>
         </div>
         <div>
@@ -37,6 +36,7 @@
             height="800"
             class="drawing-board"
             @click="setPoint"
+            @mousewheel ="drawShapes"
         ></canvas>
     </div>
 </template>
@@ -68,10 +68,6 @@ export default {
             operation: "null",
             numOfShapes: 0,
             canvas: null,
-            x: 0,
-            y: 0,
-            isDrawing: false,
-            free: false,
             shape: null,
             selectedShape: false
         };
@@ -81,32 +77,6 @@ export default {
         this.canvas = c.getContext("2d");
     },
     methods: {
-        showCoordinates(e) {
-            this.x = e.offsetX;
-            this.y = e.offsetY;
-        },
-        startFreeDraw() {
-            this.free = true;
-        },
-        drawLine(x1, y1, x2, y2) {
-            let ctx = this.canvas;
-            var stroke = document.getElementById("myStroke");
-            var stWidth = document.getElementById("strokeWidth");
-            ctx.beginPath();
-            ctx.lineWidth = stWidth.value != 0 ? stWidth.value : 1;
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.strokeStyle = stroke.value;
-            ctx.stroke();
-            ctx.closePath();
-        },
-        draw(e) {
-            if (this.isDrawing) {
-                this.drawLine(this.x, this.y, e.offsetX, e.offsetY);
-                this.x = e.offsetX;
-                this.y = e.offsetY;
-            }
-        },
         async setPoint(e) {
             if (this.selectedShape == true) {
                 console.log("seting point");
@@ -242,6 +212,7 @@ export default {
                             this.shapeStruct.points[0].x,
                             this.shapeStruct.points[0].y
                         );
+                        ctx.lineWidth = stWidth.value>0? stWidth.value:1;
                         ctx.lineTo(
                             this.shapeStruct.points[1].x,
                             this.shapeStruct.points[1].y
@@ -269,42 +240,36 @@ export default {
         },
         setRectangle() {
             this.shape = "rectangle";
-            this.free = false;
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "RECTANGLE";
             this.selectedShape = true;
         },
         setSquare() {
             this.shape = "square";
-            this.free = false;
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "SQUARE";
             this.selectedShape = true;
         },
         setCircle() {
             this.shape = "circle";
-            this.free = false;
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "CIRCLE";
             this.selectedShape = true;
         },
         setLine() {
             this.shape = "line";
-            this.free = false;
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "LINE";
             this.selectedShape = true;
         },
         setEllipse() {
             this.shape = "ellipse";
-            this.free = false;
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "ELLIPSE";
             this.selectedShape = true;
         },
         setTriangle() {
             this.shape = "triangle";
-            this.free = false;
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "TRIANGLE";
             this.selectedShape = true;
@@ -399,18 +364,6 @@ export default {
 }
 .line:hover {
     background-image: url("./line\ hov.png");
-}
-.freeDraw {
-    height: 40px;
-    width: 40px;
-    background-image: url("./free.png");
-    background-size: cover;
-    border: none;
-    margin: 2px;
-    cursor: pointer;
-}
-.freeDraw:hover {
-    background-image: url("./free\ hov.png");
 }
 .move {
     height: 40px;
