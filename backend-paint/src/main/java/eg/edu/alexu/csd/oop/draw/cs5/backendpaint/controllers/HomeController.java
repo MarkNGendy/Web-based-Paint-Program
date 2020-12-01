@@ -53,8 +53,6 @@ public class HomeController {
                 break;
         }
         saveManager.saveBoard(board);
-        System.out.println(saveManager.getCurrBoardIndex());
-        System.out.println(saveManager.getBoards().size());
         return shapeToShapeDTO(board);
     }
 
@@ -69,6 +67,8 @@ public class HomeController {
             ShapeDTO addedItem = new ShapeDTO(shape.getPoints(), shape.getShapeType(), shape.getColour(),
                     shape.getIndexInBoard(), shape.getStroke(), shape.getStrokeWidth());
             if (shape instanceof Square) {
+                addedItem.setLength(((Rectangle) shape).getLength());
+                addedItem.setWidth(((Rectangle) shape).getWidth());
                 addedItem.setSideLength(((Square) shape).getSideLength());
             }
             else if (shape instanceof Rectangle) {
@@ -89,14 +89,22 @@ public class HomeController {
 
     @CrossOrigin
     @PostMapping("/undo/")
-    List<ShapeDTO> undo (@RequestBody UndoRedoBody undoBody) {
+    List<ShapeDTO> undoOrRedo (@RequestBody UndoRedoBody undoBody) {
         Integer index = undoBody.currBoardIndex;
         SaveManager saveManager = SaveManager.getSaveManager();
-            if (index >= 0 && index < saveManager.getBoards().size()) {
+        if (undoBody.choice == UndoRedo.UNDO) {
+            if (index > 0 && index < saveManager.getBoards().size()) {
                 saveManager.setCurrBoardIndex(saveManager.getCurrBoardIndex() - 1);
                 return shapeToShapeDTO(saveManager.getBoards().get(index - 1));
             }
             saveManager.setCurrBoardIndex(0);
-            return shapeToShapeDTO(new Board());
+            return shapeToShapeDTO(saveManager.getBoards().get(0));
+        }
+        if (index >= 0 && index < saveManager.getBoards().size() - 1) {
+            saveManager.setCurrBoardIndex(saveManager.getCurrBoardIndex() + 1);
+            return shapeToShapeDTO(saveManager.getBoards().get(index + 1));
+        }
+        saveManager.setCurrBoardIndex(saveManager.getBoards().size() - 1);
+        return shapeToShapeDTO(saveManager.getBoards().get(saveManager.getBoards().size() - 1));
     }
 }

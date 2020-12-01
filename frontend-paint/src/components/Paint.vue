@@ -127,7 +127,7 @@ export default {
                             ctx.lineWidth = this.shapeStruct.strokeWidth;
                             ctx.strokeRect(
                                 this.shapeStruct.points[0].x,
-                                this.shapeStruct.points[1].y,
+                                this.shapeStruct.points[0].y,
                                 this.shapeStruct.width,
                                 this.shapeStruct.length
                             );
@@ -138,8 +138,8 @@ export default {
                         ctx.fillRect(
                             this.shapeStruct.points[0].x,
                             this.shapeStruct.points[0].y,
-                            this.shapeStruct.sideLength,
-                            this.shapeStruct.sideLength
+                            this.shapeStruct.width,
+                            this.shapeStruct.length
                         );
                         if (this.shapeStruct.strokeWidth > 0) {
                             ctx.lineWidth = this.shapeStruct.strokeWidth;
@@ -244,7 +244,7 @@ export default {
                 operation: "CREATE"
             });
             this.shapes = response.data;
-            this.clear;
+            this.clear();
             if (this.shapes.length != 0) {
                 this.shapes.forEach(element => {
                     this.shapeStruct = element;
@@ -260,8 +260,7 @@ export default {
                 choice: "UNDO"
             });
             this.shapes = response.data;
-            console.log(this.shapes);
-            this.clear;
+            this.clear();
             this.shapes.forEach(element => {
                 this.shapeStruct = element;
                 this.drawShapes();
@@ -270,6 +269,20 @@ export default {
             if (this.currBoardIndex > 0) {
                 this.currBoardIndex--;
             }
+        },
+        async redo() {
+            const response = await axios.post("http://localhost:8095/undo/", {
+                currBoardIndex: this.currBoardIndex,
+                choice: "REDO"
+            });
+            this.shapes = response.data;
+            this.clear();
+            this.shapes.forEach(element => {
+                this.shapeStruct = element;
+                this.drawShapes();
+            });
+            this.selectedShape = false;
+            this.currBoardIndex++;
         },
         setRectangle() {
             this.shapeStruct.points = [];
@@ -305,7 +318,7 @@ export default {
             var canvas = document.getElementById("myCanvas");
             var context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
-            this.shapeStruct.points = [];
+            // this.shapeStruct.points = [];
         }
     }
 };
