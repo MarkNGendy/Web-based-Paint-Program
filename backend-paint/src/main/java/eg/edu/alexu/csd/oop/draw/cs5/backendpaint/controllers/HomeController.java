@@ -58,6 +58,9 @@ public class HomeController {
 
 
     public List<ShapeDTO> shapeToShapeDTO (Board board) {
+        if (board.getShapes().size() == 0) {
+            return new ArrayList<>();
+        }
         List<ShapeDTO> retList = new ArrayList<>();
         List<Shape> shapes = board.getShapes();
         for (Shape shape: shapes) {
@@ -82,6 +85,17 @@ public class HomeController {
         return retList;
     }
 
-
-
+    @CrossOrigin
+    @PostMapping("/undo/")
+    List<ShapeDTO> undo (@RequestBody UndoRedoBody undoBody) {
+        System.out.println(undoBody.currBoardIndex);
+        Integer index = undoBody.currBoardIndex;
+        SaveManager saveManager = SaveManager.getSaveManager();
+            if (index >= 0 && index < saveManager.getBoards().size()) {
+                saveManager.setCurrBoardIndex(saveManager.getCurrBoardIndex() - 1);
+                return shapeToShapeDTO(saveManager.getBoards().get(index - 1));
+            }
+            saveManager.setCurrBoardIndex(0);
+            return shapeToShapeDTO(new Board());
+    }
 }

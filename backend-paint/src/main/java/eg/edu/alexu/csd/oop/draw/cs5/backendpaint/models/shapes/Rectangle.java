@@ -32,8 +32,8 @@ public class Rectangle extends Shape{
         Point origin = points.get(0);
         Point second = new Point(points.get(0).getX(), points.get(1).getY());
         Point third = new Point(points.get(1).getX(), points.get(0).getY());
-        setLength(distBetTwoPoints(origin, second));
-        setWidth(distBetTwoPoints(origin, third));
+        setWidth(third.getX() - origin.getX());
+        setLength(second.getY() - origin.getY());
         System.out.println(length);
         System.out.println(width);
     }

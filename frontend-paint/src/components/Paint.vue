@@ -4,8 +4,8 @@
     </div>
     <div class="main">
         <div>
-            <button class="opt">Undo</button>
-            <button class="opt">Redo</button>
+            <button class="opt" @click="undo">Undo</button>
+            <button class="opt" @click="redo">Redo</button>
             <button class="opt">Save</button>
             <button class="opt">Load</button>
             <button class="opt" @click="clear">Clear</button>
@@ -36,7 +36,7 @@
             height="800"
             class="drawing-board"
             @click="setPoint"
-            @mousewheel ="drawShapes"
+            @mousewheel="drawShapes"
         ></canvas>
     </div>
 </template>
@@ -50,6 +50,7 @@ export default {
     },
     data() {
         return {
+            currBoardIndex: 0,
             shapes: [null],
             shapeStruct: {
                 points: [],
@@ -88,14 +89,23 @@ export default {
                 ctx.arc(x, y, 2, 0, 2 * Math.PI);
                 ctx.fill();
                 this.shapeStruct.points.push({ x: x, y: y });
-                if((this.shapeStruct.points.length == 2 && this.shape == "rectangle") ||
-                (this.shapeStruct.points.length == 2 && this.shape == "square") ||
-                (this.shapeStruct.points.length == 2 && this.shape == "line") ||
-                (this.shapeStruct.points.length == 3 && this.shape == "triangle") ||
-                (this.shapeStruct.points.length == 3 && this.shape == "ellipse")) {
+                if (
+                    (this.shapeStruct.points.length == 2 &&
+                        this.shape == "rectangle") ||
+                    (this.shapeStruct.points.length == 2 &&
+                        this.shape == "square") ||
+                    (this.shapeStruct.points.length == 2 &&
+                        this.shape == "line") ||
+                    (this.shapeStruct.points.length == 3 &&
+                        this.shape == "triangle") ||
+                    (this.shapeStruct.points.length == 3 &&
+                        this.shape == "ellipse")
+                ) {
                     await this.sendRequest();
-                }
-                else if ((this.shapeStruct.points.length == 2 && this.shape == "circle")) {
+                } else if (
+                    this.shapeStruct.points.length == 2 &&
+                    this.shape == "circle"
+                ) {
                     this.shapeStruct.points.push(this.shapeStruct.points[1]);
                     await this.sendRequest();
                 }
@@ -212,7 +222,7 @@ export default {
                             this.shapeStruct.points[0].x,
                             this.shapeStruct.points[0].y
                         );
-                        ctx.lineWidth = stWidth.value>0? stWidth.value:1;
+                        ctx.lineWidth = stWidth.value > 0 ? stWidth.value : 1;
                         ctx.lineTo(
                             this.shapeStruct.points[1].x,
                             this.shapeStruct.points[1].y
@@ -230,13 +240,49 @@ export default {
                 operation: "CREATE"
             });
             this.shapes = response.data;
+            this.clear;
+            if (this.shapes.length != 0) {
+                this.shapes.forEach(element => {
+                    this.shapeStruct = element;
+                    // console.log(this.shapeStruct);
+                    this.drawShapes();
+                });
+            }
+            this.selectedShape = false;
+            this.currBoardIndex++;
             console.log(this.shapes);
+        },
+        async undo() {
+            console.log();
+            const response = await axios.post("http://localhost:8095/undo/", {
+                currBoardIndex: this.currBoardIndex,
+                choice: "UNDO"
+            });
+            this.shapes = response.data;
+            this.clear;
+            // this.shapes.forEach(element => {
+            //     this.shapeStruct = element;
+            //     this.drawShapes();
+            // });
+            // this.selectedShape = false;
+            // if(this.currBoardIndex >= 0) {
+            //     this.currBoardIndex--;
+            // }
+        },
+        async redo() {
+            const response = await axios.post("http://localhost:8095/undo/", {
+                currBoardIndex: this.currBoardIndex,
+                operation: "REDO"
+            });
+            this.shapes = response.data;
+            // console.log(this.shapes);
             this.shapes.forEach(element => {
                 this.shapeStruct = element;
                 console.log(this.shapeStruct);
                 this.drawShapes();
                 this.selectedShape = false;
             });
+            this.currBoardIndex++;
         },
         setRectangle() {
             this.shape = "rectangle";
@@ -278,7 +324,7 @@ export default {
             var canvas = document.getElementById("myCanvas");
             var context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
-            this.shapeStruct.points = [];
+            // this.shapeStruct.points = [];
         }
     }
 };
