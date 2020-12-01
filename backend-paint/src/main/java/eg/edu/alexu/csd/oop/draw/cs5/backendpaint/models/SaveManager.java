@@ -6,17 +6,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.sql.rowset.spi.XmlWriter;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.XMLFormatter;
 
 public class SaveManager {
 
@@ -47,6 +39,7 @@ public class SaveManager {
         savedBoard.setShapes(board.getShapes());
         boards.add(savedBoard);
     }
+
     public void saveJson(String fileName , String filePath ){
         try{
             ObjectMapper mapper = new ObjectMapper();
@@ -66,6 +59,7 @@ public class SaveManager {
             e.printStackTrace();
         }
     }
+
     public void loadJson(String fileName , String filePath){
         try{
             ObjectMapper mapper = new ObjectMapper();
@@ -94,4 +88,8 @@ public class SaveManager {
     public void saveXml(String fileName , String filePath){
 
     }
+
+    public void loadXml(String fileName, String filePath) {
+
     }
+}
