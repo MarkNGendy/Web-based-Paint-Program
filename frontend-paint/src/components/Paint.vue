@@ -18,7 +18,7 @@
             <button class="ellipse" @click="setEllipse"></button>
             <button class="line" @click="setLine"></button>
             <button class="freeDraw" @click="startFreeDraw"></button>
-            <button @click="drawShapes"> draw </button>
+            <button @click="drawShapes">draw</button>
         </div>
         <div>
             <button class="move"></button>
@@ -36,9 +36,6 @@
             width="1500"
             height="800"
             class="drawing-board"
-            @mousedown="beginDrawing"
-            @mouseup="stopDrawing"
-            @mousemove="draw"
             @click="setPoint"
         ></canvas>
     </div>
@@ -75,7 +72,8 @@ export default {
             y: 0,
             isDrawing: false,
             free: false,
-            shape: null
+            shape: null,
+            selectedShape: false
         };
     },
     mounted() {
@@ -109,236 +107,149 @@ export default {
                 this.y = e.offsetY;
             }
         },
-        setPoint(e){
-            console.log("seting point");
-            var canvas = document.getElementById("myCanvas");
-            var ctx = canvas.getContext("2d");
-            var x = e.offsetX;
-            var y = e.offsetY;
-            ctx.beginPath();
-            ctx.arc(x, y, 2, 0, 2 * Math.PI);
-            ctx.fill();
-            this.shapeStruct.points.push({x:x,y:y});
-            console.log(this.shapeStruct.points);
-        },
-        drawShapes(){
+        async setPoint(e) {
+            if (this.selectedShape == true) {
+                console.log("seting point");
                 var canvas = document.getElementById("myCanvas");
-                var color = document.getElementById("myColor");
-                var stroke = document.getElementById("myStroke");
-                var stWidth = document.getElementById("strokeWidth");
-                if (canvas.getContext) {
-                    var ctx = canvas.getContext("2d");
-                    ctx.fillStyle = color.value;
-                    ctx.strokeStyle = stroke.value;
-                    switch (this.shape) {
-                        case "rectangle":
-                            ctx.fillRect(
+                var ctx = canvas.getContext("2d");
+                var x = e.offsetX;
+                var y = e.offsetY;
+                ctx.beginPath();
+                ctx.arc(x, y, 2, 0, 2 * Math.PI);
+                ctx.fill();
+                this.shapeStruct.points.push({ x: x, y: y });
+                if((this.shapeStruct.points.length == 2 && this.shape == "rectangle") ||
+                (this.shapeStruct.points.length == 2 && this.shape == "square") ||
+                (this.shapeStruct.points.length == 2 && this.shape == "line") ||
+                (this.shapeStruct.points.length == 3 && this.shape == "triangle") ||
+                (this.shapeStruct.points.length == 3 && this.shape == "ellipse")) {
+                    await this.sendRequest();
+                }
+                else if ((this.shapeStruct.points.length == 2 && this.shape == "circle")) {
+                    this.shapeStruct.points.push(this.shapeStruct.points[1]);
+                    await this.sendRequest();
+                }
+            }
+        },
+        async drawShapes() {
+            var canvas = document.getElementById("myCanvas");
+            var color = document.getElementById("myColor");
+            var stroke = document.getElementById("myStroke");
+            var stWidth = document.getElementById("strokeWidth");
+            if (canvas.getContext) {
+                var ctx = canvas.getContext("2d");
+                ctx.fillStyle = color.value;
+                ctx.strokeStyle = stroke.value;
+                switch (this.shape) {
+                    case "rectangle":
+                        ctx.fillRect(
+                            this.shapeStruct.points[0].x,
+                            this.shapeStruct.points[0].y,
+                            this.shapeStruct.width,
+                            this.shapeStruct.length
+                        );
+                        if (stWidth.value > 0) {
+                            ctx.lineWidth = stWidth.value;
+                            ctx.strokeRect(
                                 this.shapeStruct.points[0].x,
-                                this.shapeStruct.points[0].y,
+                                this.shapeStruct.points[1].y,
                                 this.shapeStruct.width,
                                 this.shapeStruct.length
                             );
-                            if (stWidth.value > 0) {
-                                ctx.lineWidth = stWidth.value;
-                                ctx.strokeRect(
-                                    this.shapeStruct.points[0].x,
-                                    this.shapeStruct.points[1].y,
-                                    this.shapeStruct.width,
-                                    this.shapeStruct.length
-                                );
-                            }
-                            this.shapeStruct.shapeType = "RECTANGLE";
-                            break;
-                        case "square":
-                            ctx.fillRect(
+                        }
+                        this.shapeStruct.shapeType = "RECTANGLE";
+                        break;
+                    case "square":
+                        ctx.fillRect(
+                            this.shapeStruct.points[0].x,
+                            this.shapeStruct.points[0].y,
+                            this.shapeStruct.sideLength,
+                            this.shapeStruct.sideLength
+                        );
+                        if (stWidth.value > 0) {
+                            ctx.lineWidth = stWidth.value;
+                            ctx.strokeRect(
                                 this.shapeStruct.points[0].x,
                                 this.shapeStruct.points[0].y,
                                 this.shapeStruct.sideLength,
                                 this.shapeStruct.sideLength
-                                );
-                            if (stWidth.value > 0) {
-                                ctx.lineWidth = stWidth.value;
-                                ctx.strokeRect(
-                                    this.shapeStruct.points[0].x,
-                                    this.shapeStruct.points[0].y,
-                                    this.shapeStruct.sideLength,
-                                    this.shapeStruct.sideLength
-                                );
-                            }
-                            this.shapeStruct.shapeType = "SQUARE";
-                            break;
-                        case "circle":
-                            ctx.beginPath();
-                            ctx.arc(
-                                this.shapeStruct.points[0].x,
-                                this.shapeStruct.points[0].y,
-                                this.shapeStruct.radius, 
-                                0,
-                                2 * Math.PI
-                                );
-                            ctx.fill();
-                            if (stWidth.value > 0) {
-                                ctx.lineWidth = stWidth.value;
-                                ctx.stroke();
-                            }
-                            this.shapeStruct.shapeType = "CIRCLE";
-                            break;
-                        case "triangle":
-                            ctx.beginPath();
-                            ctx.moveTo(this.shapeStruct.points[0].x,this.shapeStruct.points[0].y);
-                            ctx.lineTo(this.shapeStruct.points[1].x,this.shapeStruct.points[1].y);
-                            ctx.lineTo(this.shapeStruct.points[2].x,this.shapeStruct.points[2].y);
-                            ctx.lineTo(this.shapeStruct.points[0].x,this.shapeStruct.points[0].y);
-                            ctx.fill();
-                            if (stWidth.value > 0) {
-                                ctx.lineWidth = stWidth.value;
-                                ctx.stroke();
-                            }
-                            this.shapeStruct.shapeType = "TRIANGLE";
-                            break;
-                        case "ellipse":
-                            ctx.beginPath();
-                            ctx.ellipse(
-                                this.shapeStruct.points[0].x,
-                                this.shapeStruct.points[0].y,
-                                this.shapeStruct.hRadius,
-                                this.shapeStruct.vRadius,
-                                0,
-                                0,
-                                2 * Math.PI
                             );
-                            ctx.fill();
-                            if (stWidth.value > 0) {
-                                ctx.lineWidth = stWidth.value;
-                                ctx.stroke();
-                            }
-                            this.shapeStruct.shapeType = "ELLIPSE";
-                            break;
-                        case "line":
-                            ctx.beginPath();
-                            ctx.moveTo(this.shapeStruct.points[0].x,this.shapeStruct.points[0].y);
-                            ctx.lineTo(this.shapeStruct.points[1].x,this.shapeStruct.points[1].y);
+                        }
+                        this.shapeStruct.shapeType = "SQUARE";
+                        break;
+                    case "circle":
+                        ctx.beginPath();
+                        ctx.arc(
+                            this.shapeStruct.points[0].x,
+                            this.shapeStruct.points[0].y,
+                            this.shapeStruct.radius,
+                            0,
+                            2 * Math.PI
+                        );
+                        ctx.fill();
+                        if (stWidth.value > 0) {
+                            ctx.lineWidth = stWidth.value;
                             ctx.stroke();
-                            this.shapeStruct.shapeType = "LINE";
-                            break;
-                        default:
-                    }
-                }
-        },
-        beginDrawing(e) {
-            this.x = e.offsetX;
-            this.y = e.offsetY;
-            if (this.free) {
-                this.isDrawing = true;
-            }
-        },
-        stopDrawing(e) {
-            if (this.isDrawing && this.free) {
-                this.drawLine(this.x, this.y, e.offsetX, e.offsetY);
-                this.x = 0;
-                this.y = 0;
-                this.isDrawing = false;
-            } else {
-                var x2 = e.offsetX;
-                var y2 = e.offsetY;
-                var canvas = document.getElementById("myCanvas");
-                var color = document.getElementById("myColor");
-                var stroke = document.getElementById("myStroke");
-                var stWidth = document.getElementById("strokeWidth");
-                if (canvas.getContext) {
-                    var ctx = canvas.getContext("2d");
-                    ctx.fillStyle = color.value;
-                    ctx.strokeStyle = stroke.value;
-                    var bigger =
-                        Math.abs(x2 - this.x) > Math.abs(y2 - this.y)
-                            ? x2 - this.x
-                            : y2 - this.y;
-                    switch (this.shape) {
-                        case "rectangle":
-                            ctx.fillRect(
-                                this.x,
-                                this.y,
-                                x2 - this.x,
-                                y2 - this.y
-                            );
-                            if (stWidth.value > 0) {
-                                ctx.lineWidth = stWidth.value;
-                                ctx.strokeRect(
-                                    this.x,
-                                    this.y,
-                                    x2 - this.x,
-                                    y2 - this.y
-                                );
-                            }
-                            this.shapeStruct.shapeType = "RECTANGLE";
-                            break;
-                        case "square":
-                            ctx.fillRect(this.x, this.y, bigger, bigger);
-                            if (stWidth.value > 0) {
-                                ctx.lineWidth = stWidth.value;
-                                ctx.strokeRect(this.x, this.y, bigger, bigger);
-                            }
-                            this.shapeStruct.shapeType = "SQUARE";
-                            break;
-                        case "circle":
-                            ctx.beginPath();
-                            ctx.arc(this.x, this.y, bigger, 0, 2 * Math.PI);
-                            ctx.fill();
-                            if (stWidth.value > 0) {
-                                ctx.lineWidth = stWidth.value;
-                                ctx.stroke();
-                            }
-                            this.shapeStruct.shapeType = "CIRCLE";
-                            break;
-                        case "triangle":
-                            ctx.beginPath();
-                            ctx.moveTo(this.x, this.y);
-                            ctx.lineTo(x2, this.y);
-                            ctx.lineTo((this.x + x2) / 2, y2);
-                            ctx.lineTo(this.x, this.y);
-                            ctx.fill();
-                            if (stWidth.value > 0) {
-                                ctx.lineWidth = stWidth.value;
-                                ctx.stroke();
-                            }
-                            this.shapeStruct.shapeType = "TRIANGLE";
-                            break;
-                        case "ellipse":
-                            ctx.beginPath();
-                            ctx.ellipse(
-                                this.x,
-                                this.y,
-                                bigger,
-                                bigger / 2,
-                                0,
-                                0,
-                                2 * Math.PI
-                            );
-                            ctx.fill();
-                            if (stWidth.value > 0) {
-                                ctx.lineWidth = stWidth.value;
-                                ctx.stroke();
-                            }
-                            this.shapeStruct.shapeType = "ELLIPSE";
-                            break;
-                        case "line":
-                            ctx.beginPath();
-                            ctx.moveTo(this.x, this.y);
-                            ctx.lineTo(x2, y2);
+                        }
+                        this.shapeStruct.shapeType = "CIRCLE";
+                        break;
+                    case "triangle":
+                        ctx.beginPath();
+                        ctx.moveTo(
+                            this.shapeStruct.points[0].x,
+                            this.shapeStruct.points[0].y
+                        );
+                        ctx.lineTo(
+                            this.shapeStruct.points[1].x,
+                            this.shapeStruct.points[1].y
+                        );
+                        ctx.lineTo(
+                            this.shapeStruct.points[2].x,
+                            this.shapeStruct.points[2].y
+                        );
+                        ctx.lineTo(
+                            this.shapeStruct.points[0].x,
+                            this.shapeStruct.points[0].y
+                        );
+                        ctx.fill();
+                        if (stWidth.value > 0) {
+                            ctx.lineWidth = stWidth.value;
                             ctx.stroke();
-                            this.shapeStruct.shapeType = "LINE";
-                            break;
-                        default:
-                    }
-                    
-                    this.shapeStruct.colour = color.value;
-                    this.shapeStruct.stroke = stroke.value;
-                    this.shapeStruct.strokeWidth = stWidth.value;
-                    this.shapeStruct.indexInBoard = this.numOfShapes;
-                    this.numOfShapes++;
-                    this.shapes.push(this.shapeStruct);
-                    this.operation = "CREATE";
-                    this.sendRequest();
+                        }
+                        this.shapeStruct.shapeType = "TRIANGLE";
+                        break;
+                    case "ellipse":
+                        ctx.beginPath();
+                        ctx.ellipse(
+                            this.shapeStruct.points[0].x,
+                            this.shapeStruct.points[0].y,
+                            this.shapeStruct.hRadius,
+                            this.shapeStruct.vRadius,
+                            0,
+                            0,
+                            2 * Math.PI
+                        );
+                        ctx.fill();
+                        if (stWidth.value > 0) {
+                            ctx.lineWidth = stWidth.value;
+                            ctx.stroke();
+                        }
+                        this.shapeStruct.shapeType = "ELLIPSE";
+                        break;
+                    case "line":
+                        ctx.beginPath();
+                        ctx.moveTo(
+                            this.shapeStruct.points[0].x,
+                            this.shapeStruct.points[0].y
+                        );
+                        ctx.lineTo(
+                            this.shapeStruct.points[1].x,
+                            this.shapeStruct.points[1].y
+                        );
+                        ctx.stroke();
+                        this.shapeStruct.shapeType = "LINE";
+                        break;
+                    default:
                 }
             }
         },
@@ -347,43 +258,62 @@ export default {
                 shape: this.shapeStruct,
                 operation: "CREATE"
             });
-            console.log(response.data);
+            this.shapes = response.data;
+            console.log(this.shapes);
+            this.shapes.forEach(element => {
+                this.shapeStruct = element;
+                console.log(this.shapeStruct);
+                this.drawShapes();
+                this.selectedShape = false;
+            });
         },
         setRectangle() {
             this.shape = "rectangle";
             this.free = false;
-            this.shapeStruct.points=[];
+            this.shapeStruct.points = [];
+            this.shapeStruct.shapeType = "RECTANGLE";
+            this.selectedShape = true;
         },
         setSquare() {
             this.shape = "square";
             this.free = false;
-            this.shapeStruct.points=[];
+            this.shapeStruct.points = [];
+            this.shapeStruct.shapeType = "SQUARE";
+            this.selectedShape = true;
         },
         setCircle() {
             this.shape = "circle";
             this.free = false;
-            this.shapeStruct.points=[];
+            this.shapeStruct.points = [];
+            this.shapeStruct.shapeType = "CIRCLE";
+            this.selectedShape = true;
         },
         setLine() {
             this.shape = "line";
             this.free = false;
-            this.shapeStruct.points=[];
+            this.shapeStruct.points = [];
+            this.shapeStruct.shapeType = "LINE";
+            this.selectedShape = true;
         },
         setEllipse() {
             this.shape = "ellipse";
             this.free = false;
-            this.shapeStruct.points=[];
+            this.shapeStruct.points = [];
+            this.shapeStruct.shapeType = "ELLIPSE";
+            this.selectedShape = true;
         },
         setTriangle() {
             this.shape = "triangle";
             this.free = false;
-            this.shapeStruct.points=[];
+            this.shapeStruct.points = [];
+            this.shapeStruct.shapeType = "TRIANGLE";
+            this.selectedShape = true;
         },
         clear() {
             var canvas = document.getElementById("myCanvas");
             var context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
-            this.shapeStruct.points=[];
+            this.shapeStruct.points = [];
         }
     }
 };
