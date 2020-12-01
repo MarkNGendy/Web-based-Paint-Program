@@ -1,6 +1,5 @@
 package eg.edu.alexu.csd.oop.draw.cs5.backendpaint;
 
-import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.SaveManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

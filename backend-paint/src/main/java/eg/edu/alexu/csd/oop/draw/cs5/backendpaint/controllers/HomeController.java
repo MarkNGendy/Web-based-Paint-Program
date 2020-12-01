@@ -53,6 +53,8 @@ public class HomeController {
                 break;
         }
         saveManager.saveBoard(board);
+        System.out.println(saveManager.getCurrBoardIndex());
+        System.out.println(saveManager.getBoards().size());
         return shapeToShapeDTO(board);
     }
 
@@ -88,7 +90,6 @@ public class HomeController {
     @CrossOrigin
     @PostMapping("/undo/")
     List<ShapeDTO> undo (@RequestBody UndoRedoBody undoBody) {
-        System.out.println(undoBody.currBoardIndex);
         Integer index = undoBody.currBoardIndex;
         SaveManager saveManager = SaveManager.getSaveManager();
             if (index >= 0 && index < saveManager.getBoards().size()) {

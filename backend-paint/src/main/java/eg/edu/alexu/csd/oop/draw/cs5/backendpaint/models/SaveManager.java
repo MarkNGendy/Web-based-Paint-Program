@@ -31,7 +31,7 @@ public class SaveManager {
 
     private SaveManager() {
         boards = new ArrayList<>();
-        currBoardIndex = 0;
+        currBoardIndex = -1;
     }
 
     public List<Board> getBoards() {

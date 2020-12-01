@@ -17,7 +17,6 @@
             <button class="triangle" @click="setTriangle"></button>
             <button class="ellipse" @click="setEllipse"></button>
             <button class="line" @click="setLine"></button>
-            <button @click="drawShapes">draw</button>
         </div>
         <div>
             <button class="move"></button>
@@ -69,7 +68,6 @@ export default {
             operation: "null",
             numOfShapes: 0,
             canvas: null,
-            shape: null,
             selectedShape: false
         };
     },
@@ -80,7 +78,6 @@ export default {
     methods: {
         async setPoint(e) {
             if (this.selectedShape == true) {
-                console.log("seting point");
                 var canvas = document.getElementById("myCanvas");
                 var ctx = canvas.getContext("2d");
                 var x = e.offsetX;
@@ -91,20 +88,20 @@ export default {
                 this.shapeStruct.points.push({ x: x, y: y });
                 if (
                     (this.shapeStruct.points.length == 2 &&
-                        this.shape == "rectangle") ||
+                        this.shapeStruct.shapeType == "RECTANGLE") ||
                     (this.shapeStruct.points.length == 2 &&
-                        this.shape == "square") ||
+                        this.shapeStruct.shapeType == "SQUARE") ||
                     (this.shapeStruct.points.length == 2 &&
-                        this.shape == "line") ||
+                        this.shapeStruct.shapeType == "LINE") ||
                     (this.shapeStruct.points.length == 3 &&
-                        this.shape == "triangle") ||
+                        this.shapeStruct.shapeType == "TRIANGLE") ||
                     (this.shapeStruct.points.length == 3 &&
-                        this.shape == "ellipse")
+                        this.shapeStruct.shapeType == "ELLIPSE")
                 ) {
                     await this.sendRequest();
                 } else if (
                     this.shapeStruct.points.length == 2 &&
-                    this.shape == "circle"
+                    this.shapeStruct.shapeType == "CIRCLE"
                 ) {
                     this.shapeStruct.points.push(this.shapeStruct.points[1]);
                     await this.sendRequest();
@@ -113,23 +110,20 @@ export default {
         },
         async drawShapes() {
             var canvas = document.getElementById("myCanvas");
-            var color = document.getElementById("myColor");
-            var stroke = document.getElementById("myStroke");
-            var stWidth = document.getElementById("strokeWidth");
             if (canvas.getContext) {
                 var ctx = canvas.getContext("2d");
-                ctx.fillStyle = color.value;
-                ctx.strokeStyle = stroke.value;
-                switch (this.shape) {
-                    case "rectangle":
+                ctx.fillStyle = this.shapeStruct.colour;
+                ctx.strokeStyle = this.shapeStruct.stroke;
+                switch (this.shapeStruct.shapeType) {
+                    case "RECTANGLE":
                         ctx.fillRect(
                             this.shapeStruct.points[0].x,
                             this.shapeStruct.points[0].y,
                             this.shapeStruct.width,
                             this.shapeStruct.length
                         );
-                        if (stWidth.value > 0) {
-                            ctx.lineWidth = stWidth.value;
+                        if (this.shapeStruct.strokeWidth > 0) {
+                            ctx.lineWidth = this.shapeStruct.strokeWidth;
                             ctx.strokeRect(
                                 this.shapeStruct.points[0].x,
                                 this.shapeStruct.points[1].y,
@@ -139,15 +133,15 @@ export default {
                         }
                         this.shapeStruct.shapeType = "RECTANGLE";
                         break;
-                    case "square":
+                    case "SQUARE":
                         ctx.fillRect(
                             this.shapeStruct.points[0].x,
                             this.shapeStruct.points[0].y,
                             this.shapeStruct.sideLength,
                             this.shapeStruct.sideLength
                         );
-                        if (stWidth.value > 0) {
-                            ctx.lineWidth = stWidth.value;
+                        if (this.shapeStruct.strokeWidth > 0) {
+                            ctx.lineWidth = this.shapeStruct.strokeWidth;
                             ctx.strokeRect(
                                 this.shapeStruct.points[0].x,
                                 this.shapeStruct.points[0].y,
@@ -157,7 +151,7 @@ export default {
                         }
                         this.shapeStruct.shapeType = "SQUARE";
                         break;
-                    case "circle":
+                    case "CIRCLE":
                         ctx.beginPath();
                         ctx.arc(
                             this.shapeStruct.points[0].x,
@@ -167,13 +161,13 @@ export default {
                             2 * Math.PI
                         );
                         ctx.fill();
-                        if (stWidth.value > 0) {
-                            ctx.lineWidth = stWidth.value;
+                        if (this.shapeStruct.strokeWidth > 0) {
+                            ctx.lineWidth = this.shapeStruct.strokeWidth;
                             ctx.stroke();
                         }
                         this.shapeStruct.shapeType = "CIRCLE";
                         break;
-                    case "triangle":
+                    case "TRIANGLE":
                         ctx.beginPath();
                         ctx.moveTo(
                             this.shapeStruct.points[0].x,
@@ -192,13 +186,13 @@ export default {
                             this.shapeStruct.points[0].y
                         );
                         ctx.fill();
-                        if (stWidth.value > 0) {
-                            ctx.lineWidth = stWidth.value;
+                        if (this.shapeStruct.strokeWidth > 0) {
+                            ctx.lineWidth = this.shapeStruct.strokeWidth;
                             ctx.stroke();
                         }
                         this.shapeStruct.shapeType = "TRIANGLE";
                         break;
-                    case "ellipse":
+                    case "ELLIPSE":
                         ctx.beginPath();
                         ctx.ellipse(
                             this.shapeStruct.points[0].x,
@@ -210,19 +204,22 @@ export default {
                             2 * Math.PI
                         );
                         ctx.fill();
-                        if (stWidth.value > 0) {
-                            ctx.lineWidth = stWidth.value;
+                        if (this.shapeStruct.strokeWidth > 0) {
+                            ctx.lineWidth = this.shapeStruct.strokeWidth;
                             ctx.stroke();
                         }
                         this.shapeStruct.shapeType = "ELLIPSE";
                         break;
-                    case "line":
+                    case "LINE":
                         ctx.beginPath();
                         ctx.moveTo(
                             this.shapeStruct.points[0].x,
                             this.shapeStruct.points[0].y
                         );
-                        ctx.lineWidth = stWidth.value > 0 ? stWidth.value : 1;
+                        ctx.lineWidth =
+                            this.shapeStruct.strokeWidth > 0
+                                ? this.shapeStruct.strokeWidth
+                                : 1;
                         ctx.lineTo(
                             this.shapeStruct.points[1].x,
                             this.shapeStruct.points[1].y
@@ -235,6 +232,12 @@ export default {
             }
         },
         async sendRequest() {
+            var color = document.getElementById("myColor");
+            var stroke = document.getElementById("myStroke");
+            var stWidth = document.getElementById("strokeWidth");
+            this.shapeStruct.colour = color.value;
+            this.shapeStruct.stroke = stroke.value;
+            this.shapeStruct.strokeWidth = stWidth.value;
             const response = await axios.post("http://localhost:8095/shapes/", {
                 shape: this.shapeStruct,
                 operation: "CREATE"
@@ -244,78 +247,55 @@ export default {
             if (this.shapes.length != 0) {
                 this.shapes.forEach(element => {
                     this.shapeStruct = element;
-                    // console.log(this.shapeStruct);
                     this.drawShapes();
                 });
             }
             this.selectedShape = false;
             this.currBoardIndex++;
-            console.log(this.shapes);
         },
         async undo() {
-            console.log();
             const response = await axios.post("http://localhost:8095/undo/", {
                 currBoardIndex: this.currBoardIndex,
                 choice: "UNDO"
             });
             this.shapes = response.data;
+            console.log(this.shapes);
             this.clear;
-            // this.shapes.forEach(element => {
-            //     this.shapeStruct = element;
-            //     this.drawShapes();
-            // });
-            // this.selectedShape = false;
-            // if(this.currBoardIndex >= 0) {
-            //     this.currBoardIndex--;
-            // }
-        },
-        async redo() {
-            const response = await axios.post("http://localhost:8095/undo/", {
-                currBoardIndex: this.currBoardIndex,
-                operation: "REDO"
-            });
-            this.shapes = response.data;
-            // console.log(this.shapes);
             this.shapes.forEach(element => {
                 this.shapeStruct = element;
-                console.log(this.shapeStruct);
                 this.drawShapes();
-                this.selectedShape = false;
             });
-            this.currBoardIndex++;
+            this.selectedShape = false;
+            if (this.currBoardIndex > 0) {
+                this.currBoardIndex--;
+            }
         },
         setRectangle() {
-            this.shape = "rectangle";
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "RECTANGLE";
             this.selectedShape = true;
         },
         setSquare() {
-            this.shape = "square";
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "SQUARE";
             this.selectedShape = true;
         },
         setCircle() {
-            this.shape = "circle";
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "CIRCLE";
             this.selectedShape = true;
         },
         setLine() {
-            this.shape = "line";
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "LINE";
             this.selectedShape = true;
         },
         setEllipse() {
-            this.shape = "ellipse";
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "ELLIPSE";
             this.selectedShape = true;
         },
         setTriangle() {
-            this.shape = "triangle";
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "TRIANGLE";
             this.selectedShape = true;

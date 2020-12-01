@@ -23,7 +23,6 @@ public class Rectangle extends Shape{
     }
 
     public void setWidth(Double width) {
-
         this.width = width;
     }
 
@@ -34,7 +33,5 @@ public class Rectangle extends Shape{
         Point third = new Point(points.get(1).getX(), points.get(0).getY());
         setWidth(third.getX() - origin.getX());
         setLength(second.getY() - origin.getY());
-        System.out.println(length);
-        System.out.println(width);
     }
 }
