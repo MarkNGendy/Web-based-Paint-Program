@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @RestController
 @CrossOrigin
 public class HomeController {
@@ -53,6 +54,8 @@ public class HomeController {
                 break;
         }
         saveManager.saveBoard(board);
+//        saveManager.loadJson("test","C:\\Users\\Dell\\Desktop\\t\\test2.json");
+//        saveManager.saveJson("test","C:\\Users\\Dell\\Desktop\\t\\test.json");
 //        return shapeToShapeDTO(board);
         return saveManager.getBoards();
     }
