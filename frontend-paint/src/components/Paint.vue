@@ -22,6 +22,7 @@
             <button class="move"></button>
             <button class="delete"></button>
             <button class="resize"></button>
+            <button class="copy"></button>
         </div>
         <label class="label">select the fill color:</label>
         <input type="color" id="myColor" />
@@ -304,7 +305,7 @@ export default {
             var canvas = document.getElementById("myCanvas");
             var context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
-            // this.shapeStruct.points = [];
+            this.shapeStruct.points = [];
         }
     }
 };
@@ -426,6 +427,18 @@ export default {
 }
 .resize:hover {
     background-image: url("./resize\ hov.png");
+}
+.copy {
+    height: 40px;
+    width: 40px;
+    background-image: url("./copy.png");
+    background-size: cover;
+    border: none;
+    margin: 2px;
+    cursor: pointer;
+}
+.copy:hover {
+    background-image: url("./copy\ hov.png");
 }
 .opt {
     display: inline-block;
