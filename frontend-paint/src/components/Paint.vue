@@ -8,7 +8,7 @@
             <button class="opt" @click="redo">Redo</button>
             <button class="opt">Save</button>
             <button class="opt">Load</button>
-            <button class="opt" @click="clearRequest">Clear</button>
+            <button class="opt" @click="btnclear">Clear</button>
         </div>
         <div class="shapes">
             <button class="square" @click="setSquare"></button>
@@ -36,6 +36,7 @@
             height="800"
             class="drawing-board"
             @click="setPoint"
+            @mousewheel="drawShapes"
         ></canvas>
     </div>
 </template>
@@ -318,16 +319,11 @@ export default {
             var context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
         },
-        async clearRequest() {
-            const response = await axios.post("http://localhost:8095/shapes/", {
-                shape: this.shapeStruct,
-                operation: "CLEAR"
-            });
-            this.shapes = response.data;
+        async btnclear() {
             this.clear();
-            this.selectedShape = false;
-            this.currBoardIndex++;
-        },
+            const ans = await axios.get("http://localhost:8095/clear/");
+            this.currBoardIndex += ans.data;
+        }
     }
 };
 </script>

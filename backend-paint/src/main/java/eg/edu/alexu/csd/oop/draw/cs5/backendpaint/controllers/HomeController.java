@@ -1,12 +1,12 @@
 package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.controllers;
 
-
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Board;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Point;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.SaveManager;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.ShapeFactory;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +19,7 @@ import java.util.List;
 public class HomeController {
 
     @PostMapping("/shapes/")
-    List<ShapeDTO> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
+    public List<ShapeDTO> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
         Board board;
         ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
         ShapeType reqShapeType = requestBodyForm.shape.getShapeType();
@@ -38,7 +38,7 @@ public class HomeController {
             board = new Board();
         } else {
             board = new Board();
-            board.setShapes(saveManager.getBoards().get(saveManager.getBoards().size() - 1).getShapes());
+            board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
         }
         switch (requestBodyForm.operation) {
             case CREATE:
@@ -50,38 +50,30 @@ public class HomeController {
                 break;
             case DELETE:
                 board.getShapes().set(indexOfShape, null);
-                break;
-            case CLEAR:
-                board.setShapes(new ArrayList<>());
-                break;
         }
         saveManager.saveBoard(board);
         return shapeToShapeDTO(board);
     }
 
-
-    public List<ShapeDTO> shapeToShapeDTO (Board board) {
+    public List<ShapeDTO> shapeToShapeDTO(Board board) {
         if (board.getShapes().size() == 0) {
             return new ArrayList<>();
         }
         List<ShapeDTO> retList = new ArrayList<>();
         List<Shape> shapes = board.getShapes();
-        for (Shape shape: shapes) {
+        for (Shape shape : shapes) {
             ShapeDTO addedItem = new ShapeDTO(shape.getPoints(), shape.getShapeType(), shape.getColour(),
                     shape.getIndexInBoard(), shape.getStroke(), shape.getStrokeWidth());
             if (shape instanceof Square) {
                 addedItem.setLength(((Rectangle) shape).getLength());
                 addedItem.setWidth(((Rectangle) shape).getWidth());
                 addedItem.setSideLength(((Square) shape).getSideLength());
-            }
-            else if (shape instanceof Rectangle) {
+            } else if (shape instanceof Rectangle) {
                 addedItem.setLength(((Rectangle) shape).getLength());
                 addedItem.setWidth(((Rectangle) shape).getWidth());
-            }
-            else if (shape instanceof Circle) {
+            } else if (shape instanceof Circle) {
                 addedItem.setRadius(((Circle) shape).getRadius());
-            }
-            else if (shape instanceof Ellipse) {
+            } else if (shape instanceof Ellipse) {
                 addedItem.sethRadius(((Ellipse) shape).gethRadius());
                 addedItem.setvRadius(((Ellipse) shape).getvRadius());
             }
@@ -92,22 +84,32 @@ public class HomeController {
 
     @CrossOrigin
     @PostMapping("/undo/")
-    List<ShapeDTO> undoOrRedo (@RequestBody UndoRedoBody undoBody) {
+    public List<ShapeDTO> undoOrRedo(@RequestBody UndoRedoBody undoBody) {
         Integer index = undoBody.currBoardIndex;
         SaveManager saveManager = SaveManager.getSaveManager();
         if (undoBody.choice == UndoRedo.UNDO) {
-            if (index > 0 && index < saveManager.getBoards().size()) {
+            if (index > 0 && index <= saveManager.getCurrBoardIndex()) {
                 saveManager.setCurrBoardIndex(saveManager.getCurrBoardIndex() - 1);
                 return shapeToShapeDTO(saveManager.getBoards().get(index - 1));
             }
-            saveManager.setCurrBoardIndex(0);
-            return shapeToShapeDTO(saveManager.getBoards().get(0));
+            saveManager.setCurrBoardIndex(saveManager.getCurrBoardIndex());
+            return shapeToShapeDTO(saveManager.getBoards().get(saveManager.getCurrBoardIndex()));
         }
-        if (index >= 0 && index < saveManager.getBoards().size() - 1) {
+        if (index >= 0 && index < saveManager.getMaxRedoIndex()) {
             saveManager.setCurrBoardIndex(saveManager.getCurrBoardIndex() + 1);
             return shapeToShapeDTO(saveManager.getBoards().get(index + 1));
         }
-        saveManager.setCurrBoardIndex(saveManager.getBoards().size() - 1);
-        return shapeToShapeDTO(saveManager.getBoards().get(saveManager.getBoards().size() - 1));
+        saveManager.setCurrBoardIndex(saveManager.getMaxRedoIndex());
+        return shapeToShapeDTO(saveManager.getBoards().get(saveManager.getMaxRedoIndex()));
+    }
+
+    @CrossOrigin
+    @GetMapping("/clear/")
+    public int clear() {
+        SaveManager savemanager = SaveManager.getSaveManager();
+        if (savemanager.getBoards().get(savemanager.getCurrBoardIndex()).getShapes().isEmpty())
+            return 0;
+        savemanager.saveBoard(new Board());
+        return 1;
     }
 }
