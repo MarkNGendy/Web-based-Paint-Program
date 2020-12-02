@@ -1,6 +1,5 @@
 package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.controllers;
 
-
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Board;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Point;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.SaveManager;
@@ -16,7 +15,7 @@ import java.util.List;
 public class HomeController {
 
     @PostMapping("/shapes/")
-    List<ShapeDTO> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
+    public List<ShapeDTO> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
         Board board;
         ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
         ShapeType reqShapeType = requestBodyForm.shape.getShapeType();
@@ -39,15 +38,10 @@ public class HomeController {
         }
         switch (requestBodyForm.operation) {
             case CREATE:
-            case COPY:
                 board.addShape(requiredShape);
                 break;
             case UPDATE:
                 board.getShapes().set(indexOfShape, requiredShape);
-                break;
-            case DELETE:
-                board.getShapes().set(indexOfShape, null);
-                break;
         }
         saveManager.saveBoard(board);
         return shapeToShapeDTO(board);
@@ -59,7 +53,7 @@ public class HomeController {
         }
         List<ShapeDTO> retList = new ArrayList<>();
         List<Shape> shapes = board.getShapes();
-        for (Shape shape: shapes) {
+        for (Shape shape : shapes) {
             ShapeDTO addedItem = new ShapeDTO(shape.getPoints(), shape.getShapeType(), shape.getColour(),
                     shape.getIndexInBoard(), shape.getStroke(), shape.getStrokeWidth());
             if (shape instanceof Square) {
@@ -110,4 +104,41 @@ public class HomeController {
         savemanager.saveBoard(new Board());
         return 1;
     }
+
+    @CrossOrigin
+    @PostMapping("/delete/")
+    public List<ShapeDTO> delete(@RequestParam(value = "index", defaultValue = "-1") int index) {
+        Board board;
+        SaveManager saveManager = SaveManager.getSaveManager();
+        if (saveManager.getBoards().isEmpty()) {
+            board = new Board();
+        } else {
+            board = new Board();
+            board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
+        }
+        if (index >= 0 && index < board.getShapes().size())
+            board.getShapes().set(index, null);
+        saveManager.saveBoard(board);
+        return shapeToShapeDTO(board);
+    }
+
+    @PostMapping("/copy/")
+    public List<ShapeDTO> copy(@RequestParam(value = "index") int index) {
+        Board board;
+        SaveManager saveManager = SaveManager.getSaveManager();
+        if (saveManager.getBoards().isEmpty()) {
+            board = new Board();
+        } else {
+            board = new Board();
+            board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
+        }
+        if (index >= 0 && index < board.getShapes().size()) {
+            Shape requiredShape = board.getShapes().get(index).deepCopy();
+            board.addShape(requiredShape);
+            requiredShape.setIndexInBoard(board.getShapes().size() - 1);
+        }
+        saveManager.saveBoard(board);
+        return shapeToShapeDTO(board);
+    }
+
 }

@@ -66,18 +66,18 @@ export default {
                 sideLength: "null",
                 hRadius: "null",
                 vRadius: "null",
-                radius: "null",
+                radius: "null"
             },
             operation: "null",
             numOfShapes: 0,
             canvas: null,
-            selectedShape : false,
-            selShape : "null",
-            xBefMov : 0,
-            yBefMov : 0,
-            movedX : 0,
-            movedY : 0,
-            oder : "null"
+            selectedShape: false,
+            selShape: "null",
+            xBefMov: 0,
+            yBefMov: 0,
+            movedX: 0,
+            movedY: 0,
+            oder: "null"
         };
     },
     mounted() {
@@ -240,23 +240,40 @@ export default {
                 }
             }
         },
-        select(e){
+        async sendRequest() {
+            var color = document.getElementById("myColor");
+            var stroke = document.getElementById("myStroke");
+            var stWidth = document.getElementById("strokeWidth");
+            this.shapeStruct.colour = color.value;
+            this.shapeStruct.stroke = stroke.value;
+            this.shapeStruct.strokeWidth = stWidth.value;
+            const response = await axios.post("http://localhost:8095/shapes/", {
+                shape: this.shapeStruct,
+                operation: "CREATE"
+            });
+            this.shapes = response.data;
+            this.clear();
+            if (this.shapes.length != 0) {
+                this.shapes.forEach(element => {
+                    if (element != null) {
+                        this.shapeStruct = element;
+                        this.drawShapes();
+                    }
+                });
+            }
+            this.selectedShape = false;
+            this.currBoardIndex++;
+        },
+        select(e) {
             var x = e.offsetX;
             var y = e.offsetY;
-            console.log(x,y);
+            console.log(x, y);
             var c = document.getElementById("myCanvas");
             var ctx = c.getContext("2d");
-            for(var i=0;i<this.shapes.length;++i){
+            for (var i = 0; i < this.shapes.length; ++i) {
                 ctx.beginPath();
                 switch (this.shapes[i].shapeType) {
                     case "RECTANGLE":
-                        ctx.rect(
-                            this.shapes[i].points[0].x,
-                            this.shapes[i].points[0].y,
-                            this.shapes[i].width,
-                            this.shapes[i].length
-                        );
-                        break;
                     case "SQUARE":
                         ctx.rect(
                             this.shapes[i].points[0].x,
@@ -320,45 +337,13 @@ export default {
                     default:
                 }
                 ctx.closePath();
-                if(ctx.isPointInPath(x,y)){
-                    this.selShape = this.shapes[i].indexInBoard;
+                if (ctx.isPointInPath(x, y)) {
+                    this.selShape = i;
                     this.xBefMov = x;
                     this.yBefMov = y;
                     break;
                 }
             }
-        },
-        movTo(e){
-            this.movedX = e.offsetX - this.xBefMov;
-            this.movedY = e.offsety - this.yBefMov;
-            for(var i=0; i<this.shapes[this.selShape].points.length;++i){
-                this.shapes[this.selShape].points.x += this.movedX;
-                this.shapes[this.selShape].points.y += this.movedY;
-            }
-            console.log(this.shapes[this.selShape]);
-            this.drawShapes();
-        },
-        async sendRequest() {
-            var color = document.getElementById("myColor");
-            var stroke = document.getElementById("myStroke");
-            var stWidth = document.getElementById("strokeWidth");
-            this.shapeStruct.colour = color.value;
-            this.shapeStruct.stroke = stroke.value;
-            this.shapeStruct.strokeWidth = stWidth.value;
-            const response = await axios.post("http://localhost:8095/shapes/", {
-                shape: this.shapeStruct,
-                operation: "CREATE"
-            });
-            this.shapes = response.data;
-            this.clear();
-            if (this.shapes.length != 0) {
-                this.shapes.forEach(element => {
-                    this.shapeStruct = element;
-                    this.drawShapes();
-                });
-            }
-            this.selectedShape = false;
-            this.currBoardIndex++;
         },
         async undo() {
             const response = await axios.post("http://localhost:8095/undo/", {
@@ -420,16 +405,46 @@ export default {
             this.shapeStruct.shapeType = "TRIANGLE";
             this.selectedShape = true;
         },
-        setCopy(){
+        async setCopy() {
             this.oder = "COPY";
+            const response = await axios.post(
+                "http://localhost:8095/copy/?index=" + this.selShape
+            );
+            this.shapes = response.data;
+            this.clear();
+            if (this.shapes.length != 0) {
+                this.shapes.forEach(element => {
+                    if (element != null) {
+                        this.shapeStruct = element;
+                        this.drawShapes();
+                    }
+                });
+            }
+            this.selectedShape = false;
+            this.currBoardIndex++;
         },
-        setMove(){
+        setMove() {
             this.oder = "MOVE";
         },
-        setDelete(){
+        async setDelete() {
             this.oder = "DELETE";
+            const response = await axios.post(
+                "http://localhost:8095/delete/?index=" + this.selShape
+            );
+            this.shapes = response.data;
+            this.clear();
+            if (this.shapes.length != 0) {
+                this.shapes.forEach(element => {
+                    if (element != null) {
+                        this.shapeStruct = element;
+                        this.drawShapes();
+                    }
+                });
+            }
+            this.selectedShape = false;
+            this.currBoardIndex++;
         },
-        setResize(){
+        setResize() {
             this.oder = "RESIZE";
         },
         clear() {
@@ -449,7 +464,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 .main {
-    background-image: url("./cool-background.png");
+    background-image: url("./images/cool-background.png");
     background-size: cover;
 }
 .shapes {
@@ -458,122 +473,122 @@ export default {
 .square {
     height: 40px;
     width: 40px;
-    background-image: url("./square.png");
+    background-image: url("./images/square.png");
     background-size: cover;
     border: none;
     margin: 2px;
     cursor: pointer;
 }
 .square:hover {
-    background-image: url("./sq\ hov.png");
+    background-image: url("./images/sq\ hov.png");
 }
 .rectangle {
     height: 40px;
     width: 40px;
-    background-image: url("./rectangle.png");
+    background-image: url("./images/rectangle.png");
     background-size: cover;
     border: none;
     margin: 2px;
     cursor: pointer;
 }
 .rectangle:hover {
-    background-image: url("./rec\ hov.png");
+    background-image: url("./images/rec\ hov.png");
 }
 .ellipse {
     height: 40px;
     width: 40px;
-    background-image: url("./ellipse.png");
+    background-image: url("./images/ellipse.png");
     background-size: cover;
     border: none;
     margin: 2px;
     cursor: pointer;
 }
 .ellipse:hover {
-    background-image: url("./ell\ hov.png");
+    background-image: url("./images/ell\ hov.png");
 }
 .triangle {
     height: 40px;
     width: 40px;
-    background-image: url("./triangle.png");
+    background-image: url("./images/triangle.png");
     background-size: cover;
     border: none;
     margin: 2px;
     cursor: pointer;
 }
 .triangle:hover {
-    background-image: url("./tri\ hov.png");
+    background-image: url("./images/tri\ hov.png");
 }
 .circle {
     height: 40px;
     width: 40px;
-    background-image: url("./circle.png");
+    background-image: url("./images/circle.png");
     background-size: cover;
     border: none;
     margin: 2px;
     cursor: pointer;
 }
 .circle:hover {
-    background-image: url("./circle\ ho.png");
+    background-image: url("./images/circle\ ho.png");
 }
 .line {
     height: 40px;
     width: 40px;
-    background-image: url("./line.png");
+    background-image: url("./images/line.png");
     background-size: cover;
     border: none;
     margin: 2px;
     cursor: pointer;
 }
 .line:hover {
-    background-image: url("./line\ hov.png");
+    background-image: url("./images/line\ hov.png");
 }
 .move {
     height: 40px;
     width: 40px;
-    background-image: url("./move.png");
+    background-image: url("./images/move.png");
     background-size: cover;
     border: none;
     margin: 2px;
     cursor: pointer;
 }
 .move:hover {
-    background-image: url("./move\ hove.png");
+    background-image: url("./images/move\ hove.png");
 }
 .delete {
     height: 40px;
     width: 40px;
-    background-image: url("./del.png");
+    background-image: url("./images/del.png");
     background-size: cover;
     border: none;
     margin: 2px;
     cursor: pointer;
 }
 .delete:hover {
-    background-image: url("./del\ hov.png");
+    background-image: url("./images/del\ hov.png");
 }
 .resize {
     height: 40px;
     width: 40px;
-    background-image: url("./resize.png");
+    background-image: url("./images/resize.png");
     background-size: cover;
     border: none;
     margin: 2px;
     cursor: pointer;
 }
 .resize:hover {
-    background-image: url("./resize\ hov.png");
+    background-image: url("./images/resize\ hov.png");
 }
 .copy {
     height: 40px;
     width: 40px;
-    background-image: url("./copy.png");
+    background-image: url("./images/copy.png");
     background-size: cover;
     border: none;
     margin: 2px;
     cursor: pointer;
 }
 .copy:hover {
-    background-image: url("./copy\ hov.png");
+    background-image: url("./images/copy\ hov.png");
 }
 .opt {
     display: inline-block;
