@@ -1,15 +1,12 @@
 package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.controllers;
 
+
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Board;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Point;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.SaveManager;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.ShapeFactory;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.*;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +16,7 @@ import java.util.List;
 public class HomeController {
 
     @PostMapping("/shapes/")
-    public List<ShapeDTO> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
+    List<ShapeDTO> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
         Board board;
         ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
         ShapeType reqShapeType = requestBodyForm.shape.getShapeType();
@@ -50,6 +47,7 @@ public class HomeController {
                 break;
             case DELETE:
                 board.getShapes().set(indexOfShape, null);
+                break;
         }
         saveManager.saveBoard(board);
         return shapeToShapeDTO(board);
@@ -61,7 +59,7 @@ public class HomeController {
         }
         List<ShapeDTO> retList = new ArrayList<>();
         List<Shape> shapes = board.getShapes();
-        for (Shape shape : shapes) {
+        for (Shape shape: shapes) {
             ShapeDTO addedItem = new ShapeDTO(shape.getPoints(), shape.getShapeType(), shape.getColour(),
                     shape.getIndexInBoard(), shape.getStroke(), shape.getStrokeWidth());
             if (shape instanceof Square) {
