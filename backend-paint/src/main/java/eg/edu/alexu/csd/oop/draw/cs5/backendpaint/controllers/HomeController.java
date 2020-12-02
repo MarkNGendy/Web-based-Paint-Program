@@ -6,6 +6,7 @@ import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Point;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.SaveManager;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.ShapeFactory;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.*;
+import org.json.JSONException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,7 @@ import java.util.List;
 public class HomeController {
 
     @PostMapping("/shapes/")
-    List<ShapeDTO> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
+    List<ShapeDTO> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) throws JSONException {
         Board board;
         ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
         ShapeType reqShapeType = requestBodyForm.shape.getShapeType();
@@ -53,6 +54,22 @@ public class HomeController {
                 break;
         }
         saveManager.saveBoard(board);
+       // saveManager.saveJson();
+      /* try {
+            saveManager.saveXml();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }*/
         return shapeToShapeDTO(board);
     }
 
