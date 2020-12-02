@@ -2,6 +2,7 @@ package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes;
 
 import java.util.List;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Point;
+import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.ShapeFactory;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,7 +26,6 @@ public abstract class Shape {
     @XmlElement(name = "strokeWidth")
     String strokeWidth;
 
-
     public void setStroke(String stroke) {
         this.stroke = stroke;
     }
@@ -45,8 +45,6 @@ public abstract class Shape {
         this.points = points;
         this.shapeType = shapeType;
     }
-
-
 
     public ShapeType getShapeType() {
         return shapeType;
@@ -72,11 +70,22 @@ public abstract class Shape {
         return strokeWidth;
     }
 
-    public static double distBetTwoPoints (Point a, Point b) {
+    public static double distBetTwoPoints(Point a, Point b) {
         double result = Math.sqrt(Math.abs(Math.pow((a.getX() - b.getX()), 2) + Math.pow((a.getY() - b.getY()), 2)));
         return result;
     }
+
     public void setIndexInBoard(int indexInBoard) {
         this.indexInBoard = indexInBoard;
+    }
+
+    public Shape deepCopy() {
+        ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
+        Shape out = shapeFactory.createShape(this.shapeType, this.points);
+        out.setColour(this.colour);
+        out.setStrokeWidth(this.strokeWidth);
+        out.setStroke(this.stroke);
+        out.setIndexInBoard(this.indexInBoard);
+        return out;
     }
 }

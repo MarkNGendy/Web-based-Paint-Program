@@ -19,7 +19,7 @@ import java.util.List;
 public class HomeController {
 
     @PostMapping("/shapes/")
-    List<ShapeDTO> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
+    public List<ShapeDTO> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
         Board board;
         ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
         ShapeType reqShapeType = requestBodyForm.shape.getShapeType();
@@ -42,15 +42,10 @@ public class HomeController {
         }
         switch (requestBodyForm.operation) {
             case CREATE:
-            case COPY:
                 board.addShape(requiredShape);
                 break;
             case UPDATE:
                 board.getShapes().set(indexOfShape, requiredShape);
-                break;
-            case DELETE:
-                board.getShapes().set(indexOfShape, null);
-                break;
         }
         saveManager.saveBoard(board);
         return shapeToShapeDTO(board);
@@ -58,7 +53,7 @@ public class HomeController {
 
     public static List<BoardDTO> boardToBoardDTO(List<Board> boards) {
         List<BoardDTO> boardDTOList = new ArrayList<>();
-        for (Board board: boards) {
+        for (Board board : boards) {
             List<ShapeDTO> shapes = shapeToShapeDTO(board);
             boardDTOList.add(new BoardDTO(shapes));
         }
@@ -70,7 +65,7 @@ public class HomeController {
             return new ArrayList<>();
         }
         List<Shape> retList = new ArrayList<>();
-        for (ShapeDTO element: list) {
+        for (ShapeDTO element : list) {
             Shape shape;
             ShapeFactory factory = ShapeFactory.getShapeFactory();
             shape = factory.createShape(element.getShapeType(), element.getPoints());
@@ -82,22 +77,24 @@ public class HomeController {
         }
         return retList;
     }
-    public static List<Board> boardDTOToBoard (List<BoardDTO> list) {
+
+    public static List<Board> boardDTOToBoard(List<BoardDTO> list) {
         List<Board> boards = new ArrayList<>();
-        for (BoardDTO board: list) {
+        for (BoardDTO board : list) {
             Board newInstance = new Board();
             newInstance.setShapes(shapeDTOToShape(board.getShapeDTOList()));
             boards.add(newInstance);
         }
         return boards;
     }
+
     public static List<ShapeDTO> shapeToShapeDTO(Board board) {
         if (board.getShapes().size() == 0) {
             return new ArrayList<>();
         }
         List<ShapeDTO> retList = new ArrayList<>();
         List<Shape> shapes = board.getShapes();
-        for (Shape shape: shapes) {
+        for (Shape shape : shapes) {
             ShapeDTO addedItem = new ShapeDTO(shape.getPoints(), shape.getShapeType(), shape.getColour(),
                     shape.getIndexInBoard(), shape.getStroke(), shape.getStrokeWidth());
             if (shape instanceof Square) {
@@ -150,6 +147,41 @@ public class HomeController {
     }
 
     @CrossOrigin
+    @PostMapping("/delete/")
+    public List<ShapeDTO> delete(@RequestParam(value = "index", defaultValue = "-1") int index) {
+        Board board;
+        SaveManager saveManager = SaveManager.getSaveManager();
+        if (saveManager.getBoards().isEmpty()) {
+            board = new Board();
+        } else {
+            board = new Board();
+            board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
+        }
+        if (index >= 0 && index < board.getShapes().size())
+            board.getShapes().set(index, null);
+        saveManager.saveBoard(board);
+        return shapeToShapeDTO(board);
+    }
+
+    @PostMapping("/copy/")
+    public List<ShapeDTO> copy(@RequestParam(value = "index") int index) {
+        Board board;
+        SaveManager saveManager = SaveManager.getSaveManager();
+        if (saveManager.getBoards().isEmpty()) {
+            board = new Board();
+        } else {
+            board = new Board();
+            board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
+        }
+        if (index >= 0 && index < board.getShapes().size()) {
+            Shape requiredShape = board.getShapes().get(index).deepCopy();
+            board.addShape(requiredShape);
+            requiredShape.setIndexInBoard(board.getShapes().size() - 1);
+        }
+        saveManager.saveBoard(board);
+        return shapeToShapeDTO(board);
+    }
+
     @PostMapping("/save/")
     public void save(@RequestBody SaveRequest saveRequest) {
         SaveManager saveManager = SaveManager.getSaveManager();
