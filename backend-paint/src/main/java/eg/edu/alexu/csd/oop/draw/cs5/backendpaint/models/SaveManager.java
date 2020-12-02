@@ -1,34 +1,21 @@
 package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONException;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
 
 public class SaveManager {
 
     private static SaveManager saveManager;
     private static List<Board> boards;
+    private int currBoardIndex;
+    private int maxRedoIndex;
 
     public int getCurrBoardIndex() {
         return currBoardIndex;
@@ -38,7 +25,9 @@ public class SaveManager {
         this.currBoardIndex = currBoardIndex;
     }
 
-    int currBoardIndex;
+    public int getMaxRedoIndex() {
+        return maxRedoIndex;
+    }
 
     public static void setBoards(List<Board> boards) {
         SaveManager.boards = boards;
@@ -64,74 +53,58 @@ public class SaveManager {
     public void saveBoard(Board board) {
         Board savedBoard = new Board();
         savedBoard.setShapes(board.getShapes());
-        boards.add(savedBoard);
+        if (currBoardIndex + 1 < boards.size())
+            boards.set(currBoardIndex + 1, savedBoard);
+        else
+            boards.add(savedBoard);
         currBoardIndex++;
+        maxRedoIndex = currBoardIndex;
     }
 
-    public FileWriter saveJson() throws JSONException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        //  JSONArray jsonArray = new JSONArray();
-        //  jsonArray.put(boards);
-        String fileName = "C:\\Users\\Dell\\Desktop\\t\\" + randomString() + ".json";
-        FileWriter file = null;
+    public void saveJson(String fileName, String filePath) {
         try {
-            file = new FileWriter(fileName);
-            String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(boards);
-            file.write(json);
-            file.close();
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(new File(filePath), boards);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (JsonParseException e) {
+            e.printStackTrace();
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonGenerationException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return file;
     }
 
-    public void loadJson() {
-
-
-    }
-
-
-    public void saveXml() throws ParserConfigurationException, TransformerException, JAXBException, FileNotFoundException, JsonProcessingException {
-        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-        Document document = documentBuilder.newDocument();
-        Element board = document.createElement("Board");
-        document.appendChild(board);
-        Attr attr = document.createAttribute("Board");
-        ObjectMapper objectMapper = new ObjectMapper();
-        String xml = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(boards);
-        attr.setValue(xml);
-        board.setAttributeNode(attr);
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        DOMSource domSource = new DOMSource(document);
-        String fileName = "C:\\Users\\Dell\\Desktop\\t\\" + randomString() + ".xml";
-        StreamResult streamResult = new StreamResult(new File(fileName));
-        transformer.transform(domSource, streamResult);
-
-
-    }
-
-    public void loadXml() {
-
-    }
-    public String randomString(){
-        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-        StringBuilder sb = new StringBuilder();
-
-        Random random = new Random();
-
-        int length = 7;
-
-        for(int i = 0; i < length; i++) {
-            int index = random.nextInt(alphabet.length());
-
-            char randomChar = alphabet.charAt(index);
-            sb.append(randomChar);
+    public void loadJson(String fileName, String filePath) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            InputStream inputStream = new FileInputStream(new File(filePath));
+            TypeReference<List<Board>> typeReference = new TypeReference<List<Board>>() {
+            };
+            List<Board> loadBoard = mapper.readValue(inputStream, typeReference);
+            setBoards(loadBoard);
+            inputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (JsonParseException e) {
+            e.printStackTrace();
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonGenerationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 
-        String randomString = sb.toString();
-        return randomString.toLowerCase();
+    public void saveXml(String fileName, String filePath) {
+
+    }
+
+    public void loadXml(String fileName, String filePath) {
+
     }
 }
