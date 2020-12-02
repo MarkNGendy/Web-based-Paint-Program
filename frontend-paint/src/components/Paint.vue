@@ -36,6 +36,7 @@
             height="800"
             class="drawing-board"
             @click="setPoint"
+            @mousewheel="drawShapes"
         ></canvas>
     </div>
 </template>
