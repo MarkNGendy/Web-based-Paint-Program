@@ -19,10 +19,10 @@
             <button class="line" @click="setLine"></button>
         </div>
         <div>
-            <button class="move"></button>
-            <button class="delete"></button>
-            <button class="resize"></button>
-            <button class="copy"></button>
+            <button class="move" @click="setMove"></button>
+            <button class="delete" @click="setDelete"></button>
+            <button class="resize" @click="setResize"></button>
+            <button class="copy" @click="setCopy"></button>
         </div>
         <label class="label">select the fill color:</label>
         <input type="color" id="myColor" />
@@ -30,13 +30,15 @@
         <input type="color" id="myStroke" />
         <label class="label">stroke width</label>
         <input type="number" id="strokeWidth" min="0" max="5" />
+        <label>{{ selShape }}</label>
         <canvas
             id="myCanvas"
             width="1500"
             height="800"
             class="drawing-board"
             @click="setPoint"
-            @mousewheel="drawShapes"
+            @mousedown="select"
+            @mouseup="movTo"
         ></canvas>
     </div>
 </template>
@@ -64,12 +66,18 @@ export default {
                 sideLength: "null",
                 hRadius: "null",
                 vRadius: "null",
-                radius: "null"
+                radius: "null",
             },
             operation: "null",
             numOfShapes: 0,
             canvas: null,
-            selectedShape: false
+            selectedShape : false,
+            selShape : "null",
+            xBefMov : 0,
+            yBefMov : 0,
+            movedX : 0,
+            movedY : 0,
+            oder : "null"
         };
     },
     mounted() {
@@ -232,6 +240,103 @@ export default {
                 }
             }
         },
+        select(e){
+            var x = e.offsetX;
+            var y = e.offsetY;
+            console.log(x,y);
+            var c = document.getElementById("myCanvas");
+            var ctx = c.getContext("2d");
+            for(var i=0;i<this.shapes.length;++i){
+                ctx.beginPath();
+                switch (this.shapes[i].shapeType) {
+                    case "RECTANGLE":
+                        ctx.rect(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y,
+                            this.shapes[i].width,
+                            this.shapes[i].length
+                        );
+                        break;
+                    case "SQUARE":
+                        ctx.rect(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y,
+                            this.shapes[i].width,
+                            this.shapes[i].length
+                        );
+                        break;
+                    case "CIRCLE":
+                        ctx.arc(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y,
+                            this.shapes[i].radius,
+                            0,
+                            2 * Math.PI
+                        );
+                        break;
+                    case "TRIANGLE":
+                        ctx.moveTo(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y
+                        );
+                        ctx.lineTo(
+                            this.shapes[i].points[1].x,
+                            this.shapes[i].points[1].y
+                        );
+                        ctx.lineTo(
+                            this.shapes[i].points[2].x,
+                            this.shapes[i].points[2].y
+                        );
+                        ctx.lineTo(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y
+                        );
+                        break;
+                    case "ELLIPSE":
+                        ctx.ellipse(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y,
+                            this.shapes[i].hRadius,
+                            this.shapes[i].vRadius,
+                            0,
+                            0,
+                            2 * Math.PI
+                        );
+                        break;
+                    case "LINE":
+                        ctx.moveTo(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y
+                        );
+                        ctx.lineWidth =
+                            this.shapes[i].strokeWidth > 0
+                                ? this.shapes[i].strokeWidth
+                                : 1;
+                        ctx.lineTo(
+                            this.shapes[i].points[1].x,
+                            this.shapes[i].points[1].y
+                        );
+                        break;
+                    default:
+                }
+                ctx.closePath();
+                if(ctx.isPointInPath(x,y)){
+                    this.selShape = this.shapes[i].indexInBoard;
+                    this.xBefMov = x;
+                    this.yBefMov = y;
+                    break;
+                }
+            }
+        },
+        movTo(e){
+            this.movedX = e.offsetX - this.xBefMov;
+            this.movedY = e.offsety - this.yBefMov;
+            for(var i=0; i<this.shapes[this.selShape].points.length;++i){
+                this.shapes[this.selShape].points.x += this.movedX;
+                this.shapes[this.selShape].points.y += this.movedY;
+            }
+            console.log(this.shapes[this.selShape]);
+            this.drawShapes();
         async save() {
             var name = "/home/markngendy/Desktop/Mark"
             var fileType = "XML"
@@ -338,6 +443,18 @@ export default {
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "TRIANGLE";
             this.selectedShape = true;
+        },
+        setCopy(){
+            this.oder = "COPY";
+        },
+        setMove(){
+            this.oder = "MOVE";
+        },
+        setDelete(){
+            this.oder = "DELETE";
+        },
+        setResize(){
+            this.oder = "RESIZE";
         },
         clear() {
             var canvas = document.getElementById("myCanvas");
