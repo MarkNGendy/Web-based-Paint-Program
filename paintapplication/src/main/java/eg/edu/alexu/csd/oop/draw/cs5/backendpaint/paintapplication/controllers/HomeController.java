@@ -37,7 +37,7 @@ public class HomeController {
             board = new Board();
         } else {
             board = new Board();
-            board.setShapes(saveManager.getBoards().get(saveManager.getBoards().size() - 1).getShapes());
+            board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
         }
         switch (requestBodyForm.operation) {
             case CREATE:
@@ -88,18 +88,18 @@ public class HomeController {
         Integer index = undoBody.currBoardIndex;
         SaveManager saveManager = SaveManager.getSaveManager();
         if (undoBody.choice == UndoRedo.UNDO) {
-            if (index > 0 && index < saveManager.getBoards().size()) {
+            if (index > 0 && index <= saveManager.getCurrBoardIndex()) {
                 saveManager.setCurrBoardIndex(saveManager.getCurrBoardIndex() - 1);
                 return shapeToShapeDTO(saveManager.getBoards().get(index - 1));
             }
-            saveManager.setCurrBoardIndex(0);
-            return shapeToShapeDTO(saveManager.getBoards().get(0));
+            saveManager.setCurrBoardIndex(saveManager.getCurrBoardIndex());
+            return shapeToShapeDTO(saveManager.getBoards().get(saveManager.getCurrBoardIndex()));
         }
-        if (index >= 0 && index < saveManager.getBoards().size() - 1) {
+        if (index >= 0 && index < saveManager.getMaxRedoIndex()) {
             saveManager.setCurrBoardIndex(saveManager.getCurrBoardIndex() + 1);
             return shapeToShapeDTO(saveManager.getBoards().get(index + 1));
         }
-        saveManager.setCurrBoardIndex(saveManager.getBoards().size() - 1);
-        return shapeToShapeDTO(saveManager.getBoards().get(saveManager.getBoards().size() - 1));
+        saveManager.setCurrBoardIndex(saveManager.getMaxRedoIndex());
+        return shapeToShapeDTO(saveManager.getBoards().get(saveManager.getMaxRedoIndex()));
     }
 }

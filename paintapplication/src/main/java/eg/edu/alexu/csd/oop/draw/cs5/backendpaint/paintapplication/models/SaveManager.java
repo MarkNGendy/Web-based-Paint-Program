@@ -14,16 +14,20 @@ public class SaveManager {
 
     private static SaveManager saveManager;
     private static List<Board> boards;
+    private int currBoardIndex;
+    private int maxRedoIndex;
 
     public int getCurrBoardIndex() {
         return currBoardIndex;
     }
 
+    public int getMaxRedoIndex() {
+        return maxRedoIndex;
+    }
+
     public void setCurrBoardIndex(int currBoardIndex) {
         this.currBoardIndex = currBoardIndex;
     }
-
-    int currBoardIndex;
 
     public static void setBoards(List<Board> boards) {
         SaveManager.boards = boards;
@@ -49,8 +53,12 @@ public class SaveManager {
     public void saveBoard(Board board) {
         Board savedBoard = new Board();
         savedBoard.setShapes(board.getShapes());
-        boards.add(savedBoard);
+        if (currBoardIndex + 1 < boards.size())
+            boards.set(currBoardIndex + 1, savedBoard);
+        else
+            boards.add(savedBoard);
         currBoardIndex++;
+        maxRedoIndex = currBoardIndex;
     }
 
     public void saveJson(String fileName, String filePath) {
