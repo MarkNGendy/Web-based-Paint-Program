@@ -19,10 +19,10 @@
             <button class="line" @click="setLine"></button>
         </div>
         <div>
-            <button class="move"></button>
-            <button class="delete"></button>
-            <button class="resize"></button>
-            <button class="copy"></button>
+            <button class="move" @click="setMove"></button>
+            <button class="delete" @click="setDelete"></button>
+            <button class="resize" @click="setResize"></button>
+            <button class="copy" @click="setCopy"></button>
         </div>
         <label class="label">select the fill color:</label>
         <input type="color" id="myColor" />
@@ -30,7 +30,7 @@
         <input type="color" id="myStroke" />
         <label class="label">stroke width</label>
         <input type="number" id="strokeWidth" min="0" max="5" />
-        <label>{{ ay7aga }}</label>
+        <label>{{ selShape }}</label>
         <canvas
             id="myCanvas"
             width="1500"
@@ -38,6 +38,7 @@
             class="drawing-board"
             @click="setPoint"
             @mousedown="select"
+            @mouseup="movTo"
         ></canvas>
     </div>
 </template>
@@ -70,8 +71,13 @@ export default {
             operation: "null",
             numOfShapes: 0,
             canvas: null,
-            selectedShape: false,
-            ay7aga : "not selected"
+            selectedShape : false,
+            selShape : "null",
+            xBefMov : 0,
+            yBefMov : 0,
+            movedX : 0,
+            movedY : 0,
+            oder : "null"
         };
     },
     mounted() {
@@ -234,7 +240,6 @@ export default {
                 }
             }
         },
-        
         select(e){
             var x = e.offsetX;
             var y = e.offsetY;
@@ -316,10 +321,22 @@ export default {
                 }
                 ctx.closePath();
                 if(ctx.isPointInPath(x,y)){
-                    this.ay7aga = this.shapes[i].shapeType + this.shapes[i].indexInBoard;
+                    this.selShape = this.shapes[i].indexInBoard;
+                    this.xBefMov = x;
+                    this.yBefMov = y;
+                    break;
                 }
             }
-
+        },
+        movTo(e){
+            this.movedX = e.offsetX - this.xBefMov;
+            this.movedY = e.offsety - this.yBefMov;
+            for(var i=0; i<this.shapes[this.selShape].points.length;++i){
+                this.shapes[this.selShape].points.x += this.movedX;
+                this.shapes[this.selShape].points.y += this.movedY;
+            }
+            console.log(this.shapes[this.selShape]);
+            this.drawShapes();
         },
         async sendRequest() {
             var color = document.getElementById("myColor");
@@ -402,6 +419,18 @@ export default {
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "TRIANGLE";
             this.selectedShape = true;
+        },
+        setCopy(){
+            this.oder = "COPY";
+        },
+        setMove(){
+            this.oder = "MOVE";
+        },
+        setDelete(){
+            this.oder = "DELETE";
+        },
+        setResize(){
+            this.oder = "RESIZE";
         },
         clear() {
             var canvas = document.getElementById("myCanvas");
