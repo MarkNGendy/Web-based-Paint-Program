@@ -337,6 +337,7 @@ export default {
             }
             console.log(this.shapes[this.selShape]);
             this.drawShapes();
+        },
         async save() {
             var name = "/home/markngendy/Desktop/Mark"
             var fileType = "XML"
