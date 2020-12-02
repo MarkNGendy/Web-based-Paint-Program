@@ -51,6 +51,9 @@ public class HomeController {
             case DELETE:
                 board.getShapes().set(indexOfShape, null);
                 break;
+            case CLEAR:
+                board.setShapes(new ArrayList<>());
+                break;
         }
         saveManager.saveBoard(board);
         return shapeToShapeDTO(board);
