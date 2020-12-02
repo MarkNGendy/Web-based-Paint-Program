@@ -6,8 +6,12 @@
         <div>
             <button class="opt" @click="undo">Undo</button>
             <button class="opt" @click="redo">Redo</button>
-            <button class="opt" @click="save">Save</button>
-            <button class="opt" @click="load">Load</button>
+            <label class="opt">Enter your file path followed by /filename</label>
+            <input  class="opt" type="text" id="path" name="fname">
+            <button class="opt" @click="save('JSON')">Save Json</button>
+            <button class="opt" @click="load('JSON')">Load Json</button>
+            <button class="opt" @click="save('XML')">Save XML</button>
+            <button class="opt" @click="load('XML')">Load XML</button>
             <button class="opt" @click="btnclear">Clear</button>
         </div>
         <div class="shapes">
@@ -66,18 +70,18 @@ export default {
                 sideLength: "null",
                 hRadius: "null",
                 vRadius: "null",
-                radius: "null",
+                radius: "null"
             },
             operation: "null",
             numOfShapes: 0,
             canvas: null,
-            selectedShape : false,
-            selShape : "null",
-            xBefMov : 0,
-            yBefMov : 0,
-            movedX : 0,
-            movedY : 0,
-            oder : "null"
+            selectedShape: false,
+            selShape: "null",
+            xBefMov: 0,
+            yBefMov: 0,
+            movedX: 0,
+            movedY: 0,
+            oder: "null"
         };
     },
     mounted() {
@@ -240,13 +244,13 @@ export default {
                 }
             }
         },
-        select(e){
+        select(e) {
             var x = e.offsetX;
             var y = e.offsetY;
-            console.log(x,y);
+            console.log(x, y);
             var c = document.getElementById("myCanvas");
             var ctx = c.getContext("2d");
-            for(var i=0;i<this.shapes.length;++i){
+            for (var i = 0; i < this.shapes.length; ++i) {
                 ctx.beginPath();
                 switch (this.shapes[i].shapeType) {
                     case "RECTANGLE":
@@ -320,7 +324,7 @@ export default {
                     default:
                 }
                 ctx.closePath();
-                if(ctx.isPointInPath(x,y)){
+                if (ctx.isPointInPath(x, y)) {
                     this.selShape = this.shapes[i].indexInBoard;
                     this.xBefMov = x;
                     this.yBefMov = y;
@@ -328,30 +332,30 @@ export default {
                 }
             }
         },
-        movTo(e){
+        movTo(e) {
             this.movedX = e.offsetX - this.xBefMov;
             this.movedY = e.offsety - this.yBefMov;
-            for(var i=0; i<this.shapes[this.selShape].points.length;++i){
+            for (var i = 0; i < this.shapes[this.selShape].points.length; ++i) {
                 this.shapes[this.selShape].points.x += this.movedX;
                 this.shapes[this.selShape].points.y += this.movedY;
             }
             console.log(this.shapes[this.selShape]);
             this.drawShapes();
         },
-        async save() {
-            var name = "/home/markngendy/Desktop/Mark"
-            var fileType = "XML"
+        async save(x) {
+            var path = document.getElementById("path");
+            var name = path.value;
             await axios.post("http://localhost:8095/save/", {
                 name: name,
-                fileType: fileType
+                fileType: x
             });
         },
-        async load() {
-            var name = "/home/markngendy/Desktop/Mark"
-            var fileType = "XML"
+        async load(x) {
+            var path = document.getElementById("path");
+            var name = path.value;
             const response = await axios.post("http://localhost:8095/load/", {
                 name: name,
-                fileType: fileType
+                fileType: x
             });
             this.shapes = response.data;
             this.clear();
@@ -445,16 +449,16 @@ export default {
             this.shapeStruct.shapeType = "TRIANGLE";
             this.selectedShape = true;
         },
-        setCopy(){
+        setCopy() {
             this.oder = "COPY";
         },
-        setMove(){
+        setMove() {
             this.oder = "MOVE";
         },
-        setDelete(){
+        setDelete() {
             this.oder = "DELETE";
         },
-        setResize(){
+        setResize() {
             this.oder = "RESIZE";
         },
         clear() {

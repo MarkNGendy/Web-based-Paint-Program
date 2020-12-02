@@ -9,16 +9,8 @@ import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.fileManagement.FileMana
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.fileManagement.JSONFileManager;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.fileManagement.XMLFileManager;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.*;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
