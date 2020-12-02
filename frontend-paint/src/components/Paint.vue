@@ -146,8 +146,8 @@ export default {
                             ctx.strokeRect(
                                 this.shapeStruct.points[0].x,
                                 this.shapeStruct.points[0].y,
-                                this.shapeStruct.sideLength,
-                                this.shapeStruct.sideLength
+                                this.shapeStruct.width,
+                                this.shapeStruct.length
                             );
                         }
                         this.shapeStruct.shapeType = "SQUARE";
