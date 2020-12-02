@@ -4,13 +4,26 @@ import java.util.List;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Point;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.ShapeFactory;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "boardsList")
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Shape {
 
+    @XmlElement(name = "points")
     List<Point> points;
+    @XmlElement(name = "shapeType")
     ShapeType shapeType;
+    @XmlElement(name = "colour")
     String colour;
+    @XmlElement(name = "indexInBoard")
     int indexInBoard;
+    @XmlElement(name = "stroke")
     String stroke;
+    @XmlElement(name = "strokeWidth")
     String strokeWidth;
 
     public void setStroke(String stroke) {
@@ -25,7 +38,10 @@ public abstract class Shape {
         this.strokeWidth = strokeWidth;
     }
 
-    protected Shape(List<Point> points, ShapeType shapeType) {
+    public Shape() {
+    }
+
+    public Shape(List<Point> points, ShapeType shapeType) {
         this.points = points;
         this.shapeType = shapeType;
     }

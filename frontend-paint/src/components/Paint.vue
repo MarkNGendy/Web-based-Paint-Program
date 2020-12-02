@@ -6,8 +6,8 @@
         <div>
             <button class="opt" @click="undo">Undo</button>
             <button class="opt" @click="redo">Redo</button>
-            <button class="opt">Save</button>
-            <button class="opt">Load</button>
+            <button class="opt" @click="save">Save</button>
+            <button class="opt" @click="load">Load</button>
             <button class="opt" @click="btnclear">Clear</button>
         </div>
         <div class="shapes">
@@ -344,6 +344,31 @@ export default {
                     break;
                 }
             }
+        },
+        async save() {
+            var name = "/home/markngendy/Desktop/Mark";
+            var fileType = "XML";
+            await axios.post("http://localhost:8095/save/", {
+                name: name,
+                fileType: fileType
+            });
+        },
+        async load() {
+            var name = "/home/markngendy/Desktop/Mark";
+            var fileType = "XML";
+            const response = await axios.post("http://localhost:8095/load/", {
+                name: name,
+                fileType: fileType
+            });
+            this.shapes = response.data;
+            this.clear();
+            if (this.shapes.length != 0) {
+                this.shapes.forEach(element => {
+                    this.shapeStruct = element;
+                    this.drawShapes();
+                });
+            }
+            this.selectedShape = false;
         },
         async undo() {
             const response = await axios.post("http://localhost:8095/undo/", {

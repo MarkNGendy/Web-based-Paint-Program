@@ -4,9 +4,21 @@ import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Board;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Point;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.SaveManager;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.ShapeFactory;
+import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.fileManagement.BoardsList;
+import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.fileManagement.FileManager;
+import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.fileManagement.JSONFileManager;
+import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.fileManagement.XMLFileManager;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes.*;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +59,44 @@ public class HomeController {
         return shapeToShapeDTO(board);
     }
 
-    public List<ShapeDTO> shapeToShapeDTO(Board board) {
+    public static List<BoardDTO> boardToBoardDTO(List<Board> boards) {
+        List<BoardDTO> boardDTOList = new ArrayList<>();
+        for (Board board : boards) {
+            List<ShapeDTO> shapes = shapeToShapeDTO(board);
+            boardDTOList.add(new BoardDTO(shapes));
+        }
+        return boardDTOList;
+    }
+
+    public static List<Shape> shapeDTOToShape(List<ShapeDTO> list) {
+        if (list == null) {
+            return new ArrayList<>();
+        }
+        List<Shape> retList = new ArrayList<>();
+        for (ShapeDTO element : list) {
+            Shape shape;
+            ShapeFactory factory = ShapeFactory.getShapeFactory();
+            shape = factory.createShape(element.getShapeType(), element.getPoints());
+            shape.setColour(element.getColour());
+            shape.setStroke(element.getStroke());
+            shape.setStrokeWidth(element.getStrokeWidth());
+            shape.setIndexInBoard(element.getIndexInBoard());
+            retList.add(shape);
+        }
+        return retList;
+    }
+
+    public static List<Board> boardDTOToBoard(List<BoardDTO> list) {
+        List<Board> boards = new ArrayList<>();
+        for (BoardDTO board : list) {
+            Board newInstance = new Board();
+            newInstance.setShapes(shapeDTOToShape(board.getShapeDTOList()));
+            boards.add(newInstance);
+        }
+        return boards;
+    }
+
+    public static List<ShapeDTO> shapeToShapeDTO(Board board) {
         if (board.getShapes().size() == 0) {
             return new ArrayList<>();
         }
@@ -141,4 +190,43 @@ public class HomeController {
         return shapeToShapeDTO(board);
     }
 
+    @PostMapping("/save/")
+    public void save(@RequestBody SaveRequest saveRequest) {
+        SaveManager saveManager = SaveManager.getSaveManager();
+        BoardsList boardsList = new BoardsList(HomeController.boardToBoardDTO(saveManager.getBoards()));
+        FileManager saver;
+        switch (saveRequest.getFileType()) {
+            case XML:
+                saver = new XMLFileManager();
+                saver.save(boardsList, saveRequest.getName());
+                break;
+            case JSON:
+                saver = new JSONFileManager();
+                saver.save(boardsList, saveRequest.getName());
+                break;
+        }
+    }
+
+    @CrossOrigin
+    @PostMapping("/load/")
+    public List<ShapeDTO> load(@RequestBody SaveRequest saveRequest) {
+        System.out.printf("i am here ");
+        SaveManager saveManager = SaveManager.getSaveManager();
+        BoardsList boardsList = new BoardsList(HomeController.boardToBoardDTO(saveManager.getBoards()));
+        FileManager saver;
+        List<BoardDTO> boards;
+        switch (saveRequest.getFileType()) {
+            case XML:
+                saver = new XMLFileManager();
+                boards = saver.load(saveRequest.getName()).getBoards();
+                saveManager.setBoards(boardDTOToBoard(boards));
+                return shapeToShapeDTO(saveManager.getBoards().get(saveManager.getBoards().size() - 1));
+            case JSON:
+                saver = new JSONFileManager();
+                boards = saver.load(saveRequest.getName()).getBoards();
+                saveManager.setBoards(boardDTOToBoard(boards));
+                return shapeToShapeDTO(saveManager.getBoards().get(saveManager.getBoards().size() - 1));
+        }
+        return null;
+    }
 }
