@@ -30,13 +30,14 @@
         <input type="color" id="myStroke" />
         <label class="label">stroke width</label>
         <input type="number" id="strokeWidth" min="0" max="5" />
+        <label>{{ ay7aga }}</label>
         <canvas
             id="myCanvas"
             width="1500"
             height="800"
             class="drawing-board"
             @click="setPoint"
-            @mousewheel="drawShapes"
+            @mousedown="select"
         ></canvas>
     </div>
 </template>
@@ -64,12 +65,13 @@ export default {
                 sideLength: "null",
                 hRadius: "null",
                 vRadius: "null",
-                radius: "null"
+                radius: "null",
             },
             operation: "null",
             numOfShapes: 0,
             canvas: null,
-            selectedShape: false
+            selectedShape: false,
+            ay7aga : "not selected"
         };
     },
     mounted() {
@@ -231,6 +233,93 @@ export default {
                     default:
                 }
             }
+        },
+        
+        select(e){
+            var x = e.offsetX;
+            var y = e.offsetY;
+            console.log(x,y);
+            var c = document.getElementById("myCanvas");
+            var ctx = c.getContext("2d");
+            for(var i=0;i<this.shapes.length;++i){
+                ctx.beginPath();
+                switch (this.shapes[i].shapeType) {
+                    case "RECTANGLE":
+                        ctx.rect(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y,
+                            this.shapes[i].width,
+                            this.shapes[i].length
+                        );
+                        break;
+                    case "SQUARE":
+                        ctx.rect(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y,
+                            this.shapes[i].width,
+                            this.shapes[i].length
+                        );
+                        break;
+                    case "CIRCLE":
+                        ctx.arc(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y,
+                            this.shapes[i].radius,
+                            0,
+                            2 * Math.PI
+                        );
+                        break;
+                    case "TRIANGLE":
+                        ctx.moveTo(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y
+                        );
+                        ctx.lineTo(
+                            this.shapes[i].points[1].x,
+                            this.shapes[i].points[1].y
+                        );
+                        ctx.lineTo(
+                            this.shapes[i].points[2].x,
+                            this.shapes[i].points[2].y
+                        );
+                        ctx.lineTo(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y
+                        );
+                        break;
+                    case "ELLIPSE":
+                        ctx.ellipse(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y,
+                            this.shapes[i].hRadius,
+                            this.shapes[i].vRadius,
+                            0,
+                            0,
+                            2 * Math.PI
+                        );
+                        break;
+                    case "LINE":
+                        ctx.moveTo(
+                            this.shapes[i].points[0].x,
+                            this.shapes[i].points[0].y
+                        );
+                        ctx.lineWidth =
+                            this.shapes[i].strokeWidth > 0
+                                ? this.shapes[i].strokeWidth
+                                : 1;
+                        ctx.lineTo(
+                            this.shapes[i].points[1].x,
+                            this.shapes[i].points[1].y
+                        );
+                        break;
+                    default:
+                }
+                ctx.closePath();
+                if(ctx.isPointInPath(x,y)){
+                    this.ay7aga = this.shapes[i].shapeType + this.shapes[i].indexInBoard;
+                }
+            }
+
         },
         async sendRequest() {
             var color = document.getElementById("myColor");
