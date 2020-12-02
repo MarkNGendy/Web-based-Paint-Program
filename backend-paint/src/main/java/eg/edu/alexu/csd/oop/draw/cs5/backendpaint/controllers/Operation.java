@@ -4,7 +4,8 @@ public enum Operation {
     CREATE("CREATE"),
     UPDATE("UPDATE"),
     COPY("COPY"),
-    DELETE("DELETE");
+    DELETE("DELETE"),
+    CLEAR("CLEAR");
     public final String name;
     Operation(String name) {
         this.name = name;
