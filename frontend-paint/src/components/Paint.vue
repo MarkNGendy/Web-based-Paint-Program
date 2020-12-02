@@ -8,7 +8,7 @@
             <button class="opt" @click="redo">Redo</button>
             <button class="opt">Save</button>
             <button class="opt">Load</button>
-            <button class="opt" @click="clear">Clear</button>
+            <button class="opt" @click="clearRequest">Clear</button>
         </div>
         <div class="shapes">
             <button class="square" @click="setSquare"></button>
@@ -317,8 +317,17 @@ export default {
             var canvas = document.getElementById("myCanvas");
             var context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
-            // this.shapeStruct.points = [];
-        }
+        },
+        async clearRequest() {
+            const response = await axios.post("http://localhost:8095/shapes/", {
+                shape: this.shapeStruct,
+                operation: "CLEAR"
+            });
+            this.shapes = response.data;
+            this.clear();
+            this.selectedShape = false;
+            this.currBoardIndex++;
+        },
     }
 };
 </script>
