@@ -14,6 +14,8 @@ public class SaveManager {
 
     private static SaveManager saveManager;
     private static List<Board> boards;
+    private int currBoardIndex;
+    private int maxRedoIndex;
 
     public int getCurrBoardIndex() {
         return currBoardIndex;
@@ -23,7 +25,9 @@ public class SaveManager {
         this.currBoardIndex = currBoardIndex;
     }
 
-    int currBoardIndex;
+    public int getMaxRedoIndex() {
+        return maxRedoIndex;
+    }
 
     public static void setBoards(List<Board> boards) {
         SaveManager.boards = boards;
@@ -49,22 +53,23 @@ public class SaveManager {
     public void saveBoard(Board board) {
         Board savedBoard = new Board();
         savedBoard.setShapes(board.getShapes());
-        boards.add(savedBoard);
+        if (currBoardIndex + 1 < boards.size())
+            boards.set(currBoardIndex + 1, savedBoard);
+        else
+            boards.add(savedBoard);
         currBoardIndex++;
+        maxRedoIndex = currBoardIndex;
     }
 
-    public void saveJson(String fileName , String filePath ){
-        try{
+    public void saveJson(String fileName, String filePath) {
+        try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(new File(filePath), boards);
-        }
-        catch(FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
-        catch(JsonParseException e){
+        } catch (JsonParseException e) {
             e.printStackTrace();
-        }
-        catch(JsonMappingException e){
+        } catch (JsonMappingException e) {
             e.printStackTrace();
         } catch (JsonGenerationException e) {
             e.printStackTrace();
@@ -73,23 +78,20 @@ public class SaveManager {
         }
     }
 
-    public void loadJson(String fileName , String filePath){
-        try{
+    public void loadJson(String fileName, String filePath) {
+        try {
             ObjectMapper mapper = new ObjectMapper();
             InputStream inputStream = new FileInputStream(new File(filePath));
             TypeReference<List<Board>> typeReference = new TypeReference<List<Board>>() {
             };
-            List<Board>loadBoard= mapper.readValue(inputStream,typeReference);
+            List<Board> loadBoard = mapper.readValue(inputStream, typeReference);
             setBoards(loadBoard);
             inputStream.close();
-        }
-        catch(FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
-        catch(JsonParseException e){
+        } catch (JsonParseException e) {
             e.printStackTrace();
-        }
-        catch(JsonMappingException e){
+        } catch (JsonMappingException e) {
             e.printStackTrace();
         } catch (JsonGenerationException e) {
             e.printStackTrace();
@@ -98,7 +100,7 @@ public class SaveManager {
         }
     }
 
-    public void saveXml(String fileName , String filePath){
+    public void saveXml(String fileName, String filePath) {
 
     }
 
