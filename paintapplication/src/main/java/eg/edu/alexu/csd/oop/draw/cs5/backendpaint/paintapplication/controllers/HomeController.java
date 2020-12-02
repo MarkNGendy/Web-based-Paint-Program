@@ -6,6 +6,7 @@ import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.paintapplication.models.SaveMa
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.paintapplication.models.ShapeFactory;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.paintapplication.models.shapes.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -101,5 +102,11 @@ public class HomeController {
         }
         saveManager.setCurrBoardIndex(saveManager.getMaxRedoIndex());
         return shapeToShapeDTO(saveManager.getBoards().get(saveManager.getMaxRedoIndex()));
+    }
+
+    @GetMapping("/clear/")
+    public void clear() {
+        SaveManager savemanager = SaveManager.getSaveManager();
+        savemanager.saveBoard(new Board());
     }
 }

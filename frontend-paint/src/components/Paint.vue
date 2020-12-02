@@ -314,11 +314,13 @@ export default {
             this.shapeStruct.shapeType = "TRIANGLE";
             this.selectedShape = true;
         },
-        clear() {
+        async clear() {
             var canvas = document.getElementById("myCanvas");
             var context = canvas.getContext("2d");
             context.clearRect(0, 0, canvas.width, canvas.height);
             // this.shapeStruct.points = [];
+            this.currBoardIndex++;
+            axios.put("http://localhost:8095/clear/");
         }
     }
 };
