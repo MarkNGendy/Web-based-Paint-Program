@@ -6,8 +6,10 @@
         <div>
             <button class="opt" @click="undo">Undo</button>
             <button class="opt" @click="redo">Redo</button>
-            <label class="opt">Enter your file path followed by /filename</label>
-            <input  class="opt" type="text" id="path" name="fname">
+            <label class="opt"
+                >Enter your file path followed by /filename</label
+            >
+            <input class="opt" type="text" id="path" name="fname" />
             <button class="opt" @click="save('JSON')">Save Json</button>
             <button class="opt" @click="load('JSON')">Load Json</button>
             <button class="opt" @click="save('XML')">Save XML</button>
@@ -384,28 +386,6 @@ export default {
                 });
             }
             this.selectedShape = false;
-        },
-        async sendRequest() {
-            var color = document.getElementById("myColor");
-            var stroke = document.getElementById("myStroke");
-            var stWidth = document.getElementById("strokeWidth");
-            this.shapeStruct.colour = color.value;
-            this.shapeStruct.stroke = stroke.value;
-            this.shapeStruct.strokeWidth = stWidth.value;
-            const response = await axios.post("http://localhost:8095/shapes/", {
-                shape: this.shapeStruct,
-                operation: "CREATE"
-            });
-            this.shapes = response.data;
-            this.clear();
-            if (this.shapes.length != 0) {
-                this.shapes.forEach(element => {
-                    this.shapeStruct = element;
-                    this.drawShapes();
-                });
-            }
-            this.selectedShape = false;
-            this.currBoardIndex++;
         },
         async undo() {
             const response = await axios.post("http://localhost:8095/undo/", {
