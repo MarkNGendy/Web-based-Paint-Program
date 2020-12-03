@@ -4,11 +4,13 @@ public class OperationsBody {
     private Integer shapeIndex;
     private double deltaX;
     private double deltaY;
+    private Operation operation;
 
-    public OperationsBody(Integer shapeIndex, double deltaX, double deltaY) {
+    public OperationsBody(Integer shapeIndex, double deltaX, double deltaY, Operation operation) {
         this.shapeIndex = shapeIndex;
         this.deltaX = deltaX;
         this.deltaY = deltaY;
+        this.operation = operation;
     }
 
     public int getShapeIndex() {
@@ -33,5 +35,13 @@ public class OperationsBody {
 
     public void setDeltaY(double deltaY) {
         this.deltaY = deltaY;
+    }
+
+    public Operation getOperation() {
+        return this.operation;
+    }
+
+    public void setOperation(Operation operation) {
+        this.operation = operation;
     }
 }
