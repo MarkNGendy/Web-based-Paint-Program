@@ -1,6 +1,7 @@
 package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes;
 
-import java.util.List;
+import java.util.ArrayList;
+ import java.util.List;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Point;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.ShapeFactory;
 
@@ -41,6 +42,14 @@ public abstract class Shape {
     public Shape() {
     }
 
+    public void setPoints(List<Point> points) {
+        this.points = points;
+    }
+
+    public void setShapeType(ShapeType shapeType) {
+        this.shapeType = shapeType;
+    }
+
     public Shape(List<Point> points, ShapeType shapeType) {
         this.points = points;
         this.shapeType = shapeType;
@@ -79,13 +88,21 @@ public abstract class Shape {
         this.indexInBoard = indexInBoard;
     }
 
-    public Shape deepCopy() {
+    public Shape deepCopy(Shape shape) {
         ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
-        Shape out = shapeFactory.createShape(this.shapeType, this.points);
-        out.setColour(this.colour);
-        out.setStrokeWidth(this.strokeWidth);
-        out.setStroke(this.stroke);
-        out.setIndexInBoard(this.indexInBoard);
+        List<Point> pointList = new ArrayList<>();
+        for (Point p: shape.getPoints()) {
+            Point s = new Point();
+            s.setX(p.getX());
+            s.setY(p.getY());
+            pointList.add(s);
+        }
+        System.out.println(pointList.size());
+        Shape out = shapeFactory.createShape(this.shapeType, pointList);
+        out.setColour(shape.getColour());
+        out.setStrokeWidth(shape.getStrokeWidth());
+        out.setStroke(shape.stroke);
+        out.setIndexInBoard(shape.getIndexInBoard());
         return out;
     }
 }

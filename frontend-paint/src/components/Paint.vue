@@ -352,26 +352,43 @@ export default {
                 }
             }
         },
-        async performOrder(e){
+        async performOrder(e) {
             this.movedX = e.offsetX - this.xBefMov;
             this.movedY = e.offsety - this.yBefMov;
             var response = null;
-            switch(this.oder){
+            switch (this.oder) {
                 case "COPY":
                     // 3aiz ab3t el delta x w dela y bs mesh 3aref .. esmohom movedX w movedY bs mesh 3aref
-                    response = await axios.post(
-                    "http://localhost:8095/copy/?index=" + this.selShape
-                    );
+                    response = await axios.post("http://localhost:8095/copy/", {
+                        shape: this.selShape,
+                        deltaX: this.movedX,
+                        deltaY: this.movedY
+                    });
+                    this.shapes = response.data;
+                    console.log(response.data);
+                    this.clear();
+                    if (this.shapes.length != 0) {
+                        this.shapes.forEach(element => {
+                            if (element != null) {
+                                this.shapeStruct = element;
+                                this.drawShapes();
+                            }
+                        });
+                    }
+                    this.selectedShape = false;
+                    this.selShape = null;
+                    this.currBoardIndex++;
+                    this.oder = null;
                     break;
                 case "MOVE":
                     // 3aiz ab3t el delta x w dela y bs mesh 3aref .. esmohom movedX w movedY bs mesh 3aref
                     response = await axios.post(
-                    "http://localhost:8095/move/?index=" + this.selShape
+                        "http://localhost:8095/move/?index=" + this.selShape
                     );
                     break;
                 case "DELETE":
                     response = await axios.post(
-                    "http://localhost:8095/delete/?index=" + this.selShape
+                        "http://localhost:8095/delete/?index=" + this.selShape
                     );
                     break;
                 case "RESIZE":
@@ -391,24 +408,23 @@ export default {
                     break;
                 default:
             }
-             this.shapes = response.data;
-                    this.clear();
-                    if (this.shapes.length != 0) {
-                        this.shapes.forEach(element => {
-                            if (element != null) {
-                                this.shapeStruct = element;
-                                this.drawShapes();
-                            }
-                        });
+            this.shapes = response.data;
+            this.clear();
+            if (this.shapes.length != 0) {
+                this.shapes.forEach(element => {
+                    if (element != null) {
+                        this.shapeStruct = element;
+                        this.drawShapes();
                     }
-                    this.selShape = false;
-                    this.currBoardIndex++;
-
+                });
+            }
+            this.selShape = false;
+            this.currBoardIndex++;
         },
-        getDistance(x1,y1,x2,y2){
+        getDistance(x1, y1, x2, y2) {
             var a = x1 - x2;
             var b = y1 - y2;
-            var c = Math.sqrt(a*a + b*b);
+            var c = Math.sqrt(a * a + b * b);
             return c;
         },
         movTo(e) {

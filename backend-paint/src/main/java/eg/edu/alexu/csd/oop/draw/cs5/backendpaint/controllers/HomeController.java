@@ -146,25 +146,26 @@ public class HomeController {
         return 1;
     }
 
-    @CrossOrigin
-    @PostMapping("/delete/")
-    public List<ShapeDTO> delete(@RequestParam(value = "index", defaultValue = "-1") int index) {
-        Board board;
-        SaveManager saveManager = SaveManager.getSaveManager();
-        if (saveManager.getBoards().isEmpty()) {
-            board = new Board();
-        } else {
-            board = new Board();
-            board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
-        }
-        if (index >= 0 && index < board.getShapes().size())
-            board.getShapes().set(index, null);
-        saveManager.saveBoard(board);
-        return shapeToShapeDTO(board);
-    }
+//    @CrossOrigin
+//    @PostMapping("/delete/")
+//    public List<ShapeDTO> delete(@RequestBody ) {
+//        Board board;
+//        SaveManager saveManager = SaveManager.getSaveManager();
+//        if (saveManager.getBoards().isEmpty()) {
+//            board = new Board();
+//        } else {
+//            board = new Board();
+//            board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
+//        }
+//        if (index >= 0 && index < board.getShapes().size())
+//            board.getShapes().set(index, null);
+//        saveManager.saveBoard(board);
+//        return shapeToShapeDTO(board);
+//    }
 
     @PostMapping("/copy/")
-    public List<ShapeDTO> copy(@RequestParam(value = "index") int index) {
+    public List<ShapeDTO> copy(@RequestBody OperationsBody operationsBody) {
+        System.out.printf("In copy");
         Board board;
         SaveManager saveManager = SaveManager.getSaveManager();
         if (saveManager.getBoards().isEmpty()) {
@@ -173,8 +174,15 @@ public class HomeController {
             board = new Board();
             board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
         }
-        if (index >= 0 && index < board.getShapes().size()) {
-            Shape requiredShape = board.getShapes().get(index).deepCopy();
+        if (operationsBody.getShapeIndex() >= 0 && operationsBody.getShapeIndex() < board.getShapes().size()) {
+            Shape requiredShape = board.getShapes().get(operationsBody.getShapeIndex()).deepCopy(board.getShapes().get(operationsBody.getShapeIndex()));
+            int i = 0;
+            for (Point p: requiredShape.getPoints()) {
+                p.setX(p.getX() + operationsBody.getDeltaX());
+                p.setY(p.getY() + operationsBody.getDeltaY());
+                requiredShape.getPoints().set(i, p);
+                i++;
+            }
             board.addShape(requiredShape);
             requiredShape.setIndexInBoard(board.getShapes().size() - 1);
         }
