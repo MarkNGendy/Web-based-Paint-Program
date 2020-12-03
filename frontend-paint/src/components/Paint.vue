@@ -4,17 +4,20 @@
     </div>
     <div class="main">
         <div>
-            <button class="opt" @click="undo">Undo</button>
-            <button class="opt" @click="redo">Redo</button>
-            <label class="opt"
-                >Enter your file path followed by /filename</label
-            >
-            <input class="opt" type="text" id="path" name="fname" />
             <button class="opt" @click="save('JSON')">Save Json</button>
             <button class="opt" @click="load('JSON')">Load Json</button>
             <button class="opt" @click="save('XML')">Save XML</button>
             <button class="opt" @click="load('XML')">Load XML</button>
+            <label class="label"
+                >Enter your file path followed by /*filename*</label
+            >
+            <input class="opt" type="text" id="path" name="fname" />
+        </div>
+        <div>
+            <button class="opt" @click="undo">Undo</button>
+            <button class="opt" @click="redo">Redo</button>
             <button class="opt" @click="btnclear">Clear</button>
+
         </div>
         <div class="shapes">
             <button class="square" @click="setSquare"></button>
