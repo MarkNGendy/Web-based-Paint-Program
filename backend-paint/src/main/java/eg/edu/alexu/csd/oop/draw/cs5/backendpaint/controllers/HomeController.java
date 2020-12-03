@@ -186,25 +186,25 @@ public class HomeController {
         return requiredShape;
     }
 
-    /*
-     * @PostMapping("/copy/") public List<ShapeDTO> copy(@RequestBody OperationsBody
-     * operationsBody) { System.out.println(operationsBody.getDeltaX() + "\n");
-     * System.out.println(operationsBody.getDeltaY() + "\n");
-     * System.out.print(operationsBody.getShapeIndex()); Board board; SaveManager
-     * saveManager = SaveManager.getSaveManager(); if
-     * (saveManager.getBoards().isEmpty()) { board = new Board(); } else { board =
-     * new Board();
-     * board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).
-     * getShapes()); } if (operationsBody.getShapeIndex() >= 0 &&
-     * operationsBody.getShapeIndex() < board.getShapes().size()) { Shape
-     * requiredShape = board.getShapes().get(operationsBody.getShapeIndex())
-     * .deepCopy(board.getShapes().get(operationsBody.getShapeIndex())); int i = 0;
-     * for (Point p : requiredShape.getPoints()) { p.setX(p.getX() +
-     * operationsBody.getDeltaX()); p.setY(p.getY() + operationsBody.getDeltaY());
-     * requiredShape.getPoints().set(i, p); i++; } board.addShape(requiredShape);
-     * requiredShape.setIndexInBoard(board.getShapes().size() - 1); }
-     * saveManager.saveBoard(board); return shapeToShapeDTO(board); }
-     */
+    
+      @PostMapping("/copy/") public List<ShapeDTO> copy(@RequestBody OperationsBody
+      operationsBody) { System.out.println(operationsBody.getDeltaX() + "\n");
+      System.out.println(operationsBody.getDeltaY() + "\n");
+      System.out.print(operationsBody.getShapeIndex()); Board board; SaveManager
+      saveManager = SaveManager.getSaveManager(); if
+      (saveManager.getBoards().isEmpty()) { board = new Board(); } else { board =
+      new Board();
+      board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).
+      getShapes()); } if (operationsBody.getShapeIndex() >= 0 &&
+      operationsBody.getShapeIndex() < board.getShapes().size()) { Shape
+      requiredShape = board.getShapes().get(operationsBody.getShapeIndex())
+      .deepCopy(board.getShapes().get(operationsBody.getShapeIndex())); int i = 0;
+      for (Point p : requiredShape.getPoints()) { p.setX(p.getX() +
+      operationsBody.getDeltaX()); p.setY(p.getY() + operationsBody.getDeltaY());
+      requiredShape.getPoints().set(i, p); i++; } board.addShape(requiredShape);
+      requiredShape.setIndexInBoard(board.getShapes().size() - 1); }
+      saveManager.saveBoard(board); return shapeToShapeDTO(board); }
+     
 
     @PostMapping("/save/")
     public void save(@RequestBody SaveRequest saveRequest) {

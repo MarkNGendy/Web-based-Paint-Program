@@ -276,7 +276,7 @@ export default {
             console.log(x, y);
             var c = document.getElementById("myCanvas");
             var ctx = c.getContext("2d");
-            for (var i = 0; i < this.shapes.length; ++i) {
+            for (var i = this.shapes.length-1; i >= 0 ; --i) {
                 ctx.beginPath();
                 switch (this.shapes[i].shapeType) {
                     case "RECTANGLE":
@@ -360,8 +360,10 @@ export default {
         },
         async performOrder(e) {
             this.movedX = e.offsetX - this.xBefMov;
-            this.movedY = e.offsety - this.yBefMov;
+            this.movedY = e.offsetY - this.yBefMov;
+
             console.log(this.movedY);
+
             var response = null;
             switch (this.oder) {
                 case "COPY":
@@ -416,18 +418,7 @@ export default {
                     break;
                 default:
             }
-            this.shapes = response.data;
-            this.clear();
-            if (this.shapes.length != 0) {
-                this.shapes.forEach(element => {
-                    if (element != null) {
-                        this.shapeStruct = element;
-                        this.drawShapes();
-                    }
-                });
-            }
-            this.selShape = false;
-            this.currBoardIndex++;
+            
         },
         getDistance(x1, y1, x2, y2) {
             var a = x1 - x2;
