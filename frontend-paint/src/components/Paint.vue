@@ -44,7 +44,7 @@
             class="drawing-board"
             @click="setPoint"
             @mousedown="select"
-            @mouseup="movTo"
+            @mouseup="performOrder"
         ></canvas>
     </div>
 </template>
@@ -352,6 +352,65 @@ export default {
                 }
             }
         },
+        async performOrder(e){
+            this.movedX = e.offsetX - this.xBefMov;
+            this.movedY = e.offsety - this.yBefMov;
+            var response = null;
+            switch(this.oder){
+                case "COPY":
+                    // 3aiz ab3t el delta x w dela y bs mesh 3aref .. esmohom movedX w movedY bs mesh 3aref
+                    response = await axios.post(
+                    "http://localhost:8095/copy/?index=" + this.selShape
+                    );
+                    break;
+                case "MOVE":
+                    // 3aiz ab3t el delta x w dela y bs mesh 3aref .. esmohom movedX w movedY bs mesh 3aref
+                    response = await axios.post(
+                    "http://localhost:8095/move/?index=" + this.selShape
+                    );
+                    break;
+                case "DELETE":
+                    response = await axios.post(
+                    "http://localhost:8095/delete/?index=" + this.selShape
+                    );
+                    break;
+                case "RESIZE":
+                    // for circle only
+                    /*if(Math.abs(this.getDistance(this.shapes[this.selShape].points[0].x,
+                                        this.shapes[this.selShape].points[0].y,
+                                        this.xBefMov,
+                                        this.yBefMov )-this.shapes[this.selShape].radius)<=5){
+                                            var newRadius = this.getDistance(this.shapes[this.selShape].points[0].x,
+                                                                            this.shapes[this.selShape].points[0].y,
+                                                                            e.offsetX,
+                                                                            e.offsetY);
+                                            response = await axios.post(
+                                            "http://localhost:8095/resize/?index=" + this.selShape
+                                            );
+                                        }*/
+                    break;
+                default:
+            }
+             this.shapes = response.data;
+                    this.clear();
+                    if (this.shapes.length != 0) {
+                        this.shapes.forEach(element => {
+                            if (element != null) {
+                                this.shapeStruct = element;
+                                this.drawShapes();
+                            }
+                        });
+                    }
+                    this.selShape = false;
+                    this.currBoardIndex++;
+
+        },
+        getDistance(x1,y1,x2,y2){
+            var a = x1 - x2;
+            var b = y1 - y2;
+            var c = Math.sqrt(a*a + b*b);
+            return c;
+        },
         movTo(e) {
             this.movedX = e.offsetX - this.xBefMov;
             this.movedY = e.offsety - this.yBefMov;
@@ -447,44 +506,14 @@ export default {
             this.shapeStruct.shapeType = "TRIANGLE";
             this.selectedShape = true;
         },
-        async setCopy() {
+        setCopy() {
             this.oder = "COPY";
-            const response = await axios.post(
-                "http://localhost:8095/copy/?index=" + this.selShape
-            );
-            this.shapes = response.data;
-            this.clear();
-            if (this.shapes.length != 0) {
-                this.shapes.forEach(element => {
-                    if (element != null) {
-                        this.shapeStruct = element;
-                        this.drawShapes();
-                    }
-                });
-            }
-            this.selectedShape = false;
-            this.currBoardIndex++;
         },
         setMove() {
             this.oder = "MOVE";
         },
-        async setDelete() {
+        setDelete() {
             this.oder = "DELETE";
-            const response = await axios.post(
-                "http://localhost:8095/delete/?index=" + this.selShape
-            );
-            this.shapes = response.data;
-            this.clear();
-            if (this.shapes.length != 0) {
-                this.shapes.forEach(element => {
-                    if (element != null) {
-                        this.shapeStruct = element;
-                        this.drawShapes();
-                    }
-                });
-            }
-            this.selectedShape = false;
-            this.currBoardIndex++;
         },
         setResize() {
             this.oder = "RESIZE";
