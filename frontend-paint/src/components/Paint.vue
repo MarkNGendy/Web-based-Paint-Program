@@ -339,6 +339,12 @@ export default {
                             this.shapes[i].points[1].x,
                             this.shapes[i].points[1].y
                         );
+                        if (ctx.isPointInStroke(x, y)) {
+                        this.selShape = this.shapes[i].indexInBoard;
+                        this.selShape = i;
+                        this.xBefMov = x;
+                        this.yBefMov = y;
+                        }
                         break;
                     default:
                 }
