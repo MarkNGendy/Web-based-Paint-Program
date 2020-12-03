@@ -1,11 +1,11 @@
 package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.controllers;
 
 public class OperationsBody {
-    private int shapeIndex;
+    private Integer shapeIndex;
     private double deltaX;
     private double deltaY;
 
-    public OperationsBody(int shapeIndex, double deltaX, double deltaY) {
+    public OperationsBody(Integer shapeIndex, double deltaX, double deltaY) {
         this.shapeIndex = shapeIndex;
         this.deltaX = deltaX;
         this.deltaY = deltaY;
@@ -15,7 +15,7 @@ public class OperationsBody {
         return shapeIndex;
     }
 
-    public void setShapeIndex(int shapeIndex) {
+    public void setShapeIndex(Integer shapeIndex) {
         this.shapeIndex = shapeIndex;
     }
 

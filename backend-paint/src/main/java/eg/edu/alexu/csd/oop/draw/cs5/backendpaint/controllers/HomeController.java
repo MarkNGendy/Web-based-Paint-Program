@@ -165,7 +165,9 @@ public class HomeController {
 
     @PostMapping("/copy/")
     public List<ShapeDTO> copy(@RequestBody OperationsBody operationsBody) {
-        System.out.printf("In copy");
+        System.out.println(operationsBody.getDeltaX() + "\n");
+        System.out.println(operationsBody.getDeltaY() + "\n");
+        System.out.print(operationsBody.getShapeIndex());
         Board board;
         SaveManager saveManager = SaveManager.getSaveManager();
         if (saveManager.getBoards().isEmpty()) {

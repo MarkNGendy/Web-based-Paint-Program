@@ -270,7 +270,7 @@ export default {
             this.selectedShape = false;
             this.currBoardIndex++;
         },
-        select(e) {
+        async select(e) {
             var x = e.offsetX;
             var y = e.offsetY;
             console.log(x, y);
@@ -355,12 +355,14 @@ export default {
         async performOrder(e) {
             this.movedX = e.offsetX - this.xBefMov;
             this.movedY = e.offsety - this.yBefMov;
+            console.log(this.movedY);
             var response = null;
             switch (this.oder) {
                 case "COPY":
                     // 3aiz ab3t el delta x w dela y bs mesh 3aref .. esmohom movedX w movedY bs mesh 3aref
+                    console.log(this.selShape);
                     response = await axios.post("http://localhost:8095/copy/", {
-                        shape: this.selShape,
+                        shapeIndex: this.selShape,
                         deltaX: this.movedX,
                         deltaY: this.movedY
                     });
