@@ -354,7 +354,7 @@ export default {
         },
         async performOrder(e) {
             this.movedX = e.offsetX - this.xBefMov;
-            this.movedY = e.offsety - this.yBefMov;
+            this.movedY = e.offsetY - this.yBefMov;
             console.log(this.movedY);
             var response = null;
             switch (this.oder) {

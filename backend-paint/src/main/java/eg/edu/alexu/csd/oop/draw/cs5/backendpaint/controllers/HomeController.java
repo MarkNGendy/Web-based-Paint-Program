@@ -45,6 +45,7 @@ public class HomeController {
                 board.addShape(requiredShape);
                 break;
             case UPDATE:
+                
                 board.getShapes().set(indexOfShape, requiredShape);
         }
         saveManager.saveBoard(board);
