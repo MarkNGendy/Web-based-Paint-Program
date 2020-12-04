@@ -17,7 +17,6 @@
             <button class="opt" @click="undo">Undo</button>
             <button class="opt" @click="redo">Redo</button>
             <button class="opt" @click="btnclear">Clear</button>
-
         </div>
         <div class="shapes">
             <button class="square" @click="setSquare"></button>
@@ -278,7 +277,7 @@ export default {
             var y = e.offsetY;
             var c = document.getElementById("myCanvas");
             var ctx = c.getContext("2d");
-            for (var i = this.shapes.length-1; i >= 0 ; --i) {
+            for (var i = this.shapes.length - 1; i >= 0; --i) {
                 ctx.beginPath();
                 switch (this.shapes[i].shapeType) {
                     case "RECTANGLE":
@@ -342,10 +341,10 @@ export default {
                             this.shapes[i].points[1].y
                         );
                         if (ctx.isPointInStroke(x, y)) {
-                        this.selShape = this.shapes[i].indexInBoard;
-                        this.selShape = i;
-                        this.xBefMov = x;
-                        this.yBefMov = y;
+                            this.selShape = this.shapes[i].indexInBoard;
+                            this.selShape = i;
+                            this.xBefMov = x;
+                            this.yBefMov = y;
                         }
                         break;
                     default:
@@ -414,11 +413,14 @@ export default {
                     this.oder = null;
                     break;
                 case "DELETE":
-                    response = await axios.post( "http://localhost:8095/delete/", {
-                            shapeIndex: this.selShape,
-                        });
-                        this.shapes = response.data;
-                        this.clear();
+                    response = await axios.post(
+                        "http://localhost:8095/delete/",
+                        {
+                            shapeIndex: this.selShape
+                        }
+                    );
+                    this.shapes = response.data;
+                    this.clear();
                     if (this.shapes.length != 0) {
                         this.shapes.forEach(element => {
                             if (element != null) {
@@ -449,7 +451,6 @@ export default {
                     break;
                 default:
             }
-
         },
         getDistance(x1, y1, x2, y2) {
             var a = x1 - x2;
@@ -474,7 +475,7 @@ export default {
                 name: name,
                 fileType: x
             });
-            this.setcurrIndex;
+            this.setcurrIndex();
         },
         async load(x) {
             var path = document.getElementById("path");
@@ -492,12 +493,11 @@ export default {
                 });
             }
             this.selectedShape = false;
-            this.setcurrIndex;
+            this.setcurrIndex();
         },
         async setcurrIndex() {
             const response = await axios.get("http://localhost:8095/index/set");
             this.currBoardIndex = response.data;
-
         },
         async undo() {
             const response = await axios.post("http://localhost:8095/undo/", {
@@ -514,7 +514,7 @@ export default {
             // if (this.currBoardIndex > 0) {
             //     this.currBoardIndex--;
             // }
-            this.setcurrIndex;
+            this.setcurrIndex();
         },
         async redo() {
             const response = await axios.post("http://localhost:8095/undo/", {
