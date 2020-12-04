@@ -45,7 +45,6 @@ public class HomeController {
                 board.addShape(requiredShape);
                 break;
             case UPDATE:
-                
                 board.getShapes().set(indexOfShape, requiredShape);
         }
         saveManager.saveBoard(board);
@@ -96,22 +95,26 @@ public class HomeController {
         List<ShapeDTO> retList = new ArrayList<>();
         List<Shape> shapes = board.getShapes();
         for (Shape shape : shapes) {
-            ShapeDTO addedItem = new ShapeDTO(shape.getPoints(), shape.getShapeType(), shape.getColour(),
-                    shape.getIndexInBoard(), shape.getStroke(), shape.getStrokeWidth());
-            if (shape instanceof Square) {
-                addedItem.setLength(((Rectangle) shape).getLength());
-                addedItem.setWidth(((Rectangle) shape).getWidth());
-                addedItem.setSideLength(((Square) shape).getSideLength());
-            } else if (shape instanceof Rectangle) {
-                addedItem.setLength(((Rectangle) shape).getLength());
-                addedItem.setWidth(((Rectangle) shape).getWidth());
-            } else if (shape instanceof Circle) {
-                addedItem.setRadius(((Circle) shape).getRadius());
-            } else if (shape instanceof Ellipse) {
-                addedItem.sethRadius(((Ellipse) shape).gethRadius());
-                addedItem.setvRadius(((Ellipse) shape).getvRadius());
+            if (shape == null) {
+                retList.add(null);
+            } else {
+                ShapeDTO addedItem = new ShapeDTO(shape.getPoints(), shape.getShapeType(), shape.getColour(),
+                        shape.getIndexInBoard(), shape.getStroke(), shape.getStrokeWidth());
+                if (shape instanceof Square) {
+                    addedItem.setLength(((Rectangle) shape).getLength());
+                    addedItem.setWidth(((Rectangle) shape).getWidth());
+                    addedItem.setSideLength(((Square) shape).getSideLength());
+                } else if (shape instanceof Rectangle) {
+                    addedItem.setLength(((Rectangle) shape).getLength());
+                    addedItem.setWidth(((Rectangle) shape).getWidth());
+                } else if (shape instanceof Circle) {
+                    addedItem.setRadius(((Circle) shape).getRadius());
+                } else if (shape instanceof Ellipse) {
+                    addedItem.sethRadius(((Ellipse) shape).gethRadius());
+                    addedItem.setvRadius(((Ellipse) shape).getvRadius());
+                }
+                retList.add(addedItem);
             }
-            retList.add(addedItem);
         }
         return retList;
     }
@@ -147,22 +150,47 @@ public class HomeController {
         return 1;
     }
 
-//    @CrossOrigin
-//    @PostMapping("/delete/")
-//    public List<ShapeDTO> delete(@RequestBody ) {
-//        Board board;
-//        SaveManager saveManager = SaveManager.getSaveManager();
-//        if (saveManager.getBoards().isEmpty()) {
-//            board = new Board();
-//        } else {
-//            board = new Board();
-//            board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
-//        }
-//        if (index >= 0 && index < board.getShapes().size())
-//            board.getShapes().set(index, null);
-//        saveManager.saveBoard(board);
-//        return shapeToShapeDTO(board);
-//    }
+    @CrossOrigin
+    @PostMapping("/delete/")
+    public List<ShapeDTO> delete(@RequestBody OperationsBody operationsBody) {
+        Board board;
+        SaveManager saveManager = SaveManager.getSaveManager();
+        if (saveManager.getBoards().isEmpty()) {
+            board = new Board();
+        } else {
+            board = new Board();
+            board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
+        }
+        if (operationsBody.getShapeIndex() >= 0 && operationsBody.getShapeIndex() < board.getShapes().size())
+            board.getShapes().set(operationsBody.getShapeIndex(), null);
+        saveManager.saveBoard(board);
+        return shapeToShapeDTO(board);
+    }
+
+    @PostMapping("/move/")
+    public List<ShapeDTO> move(@RequestBody OperationsBody operationsBody) {
+        Board board;
+        SaveManager saveManager = SaveManager.getSaveManager();
+        if (saveManager.getBoards().isEmpty()) {
+            board = new Board();
+        } else {
+            board = new Board();
+            board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
+        }
+        if (operationsBody.getShapeIndex() >= 0 && operationsBody.getShapeIndex() < board.getShapes().size()) {
+            Shape requiredShape = board.getShapes().get(operationsBody.getShapeIndex()).deepCopy(board.getShapes().get(operationsBody.getShapeIndex()));
+            int i = 0;
+            for (Point p: requiredShape.getPoints()) {
+                p.setX(p.getX() + operationsBody.getDeltaX());
+                p.setY(p.getY() + operationsBody.getDeltaY());
+                requiredShape.getPoints().set(i, p);
+                i++;
+            }
+            board.getShapes().set(operationsBody.getShapeIndex(), requiredShape);
+        }
+        saveManager.saveBoard(board);
+        return shapeToShapeDTO(board);
+    }
 
     @PostMapping("/copy/")
     public List<ShapeDTO> copy(@RequestBody OperationsBody operationsBody) {
@@ -228,8 +256,15 @@ public class HomeController {
                 saver = new JSONFileManager();
                 boards = saver.load(saveRequest.getName()).getBoards();
                 saveManager.setBoards(boardDTOToBoard(boards));
+                saveManager.setCurrBoardIndex(saveManager.getBoards().size() - 1);
                 return shapeToShapeDTO(saveManager.getBoards().get(saveManager.getBoards().size() - 1));
         }
         return null;
+    }
+
+    @CrossOrigin
+    @GetMapping("/index/set")
+    public int setCurrBoardIndex () {
+        return SaveManager.getSaveManager().getCurrBoardIndex();
     }
 }

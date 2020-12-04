@@ -273,7 +273,6 @@ export default {
         async select(e) {
             var x = e.offsetX;
             var y = e.offsetY;
-            console.log(x, y);
             var c = document.getElementById("myCanvas");
             var ctx = c.getContext("2d");
             for (var i = 0; i < this.shapes.length; ++i) {
@@ -384,14 +383,45 @@ export default {
                     break;
                 case "MOVE":
                     // 3aiz ab3t el delta x w dela y bs mesh 3aref .. esmohom movedX w movedY bs mesh 3aref
-                    response = await axios.post(
-                        "http://localhost:8095/move/?index=" + this.selShape
-                    );
+                    response = await axios.post("http://localhost:8095/move/", {
+                        shapeIndex: this.selShape,
+                        deltaX: this.movedX,
+                        deltaY: this.movedY
+                    });
+                    this.shapes = response.data;
+                    console.log(response.data);
+                    this.clear();
+                    if (this.shapes.length != 0) {
+                        this.shapes.forEach(element => {
+                            if (element != null) {
+                                this.shapeStruct = element;
+                                this.drawShapes();
+                            }
+                        });
+                    }
+                    this.selectedShape = false;
+                    this.selShape = null;
+                    this.currBoardIndex++;
+                    this.oder = null;
                     break;
                 case "DELETE":
-                    response = await axios.post(
-                        "http://localhost:8095/delete/?index=" + this.selShape
-                    );
+                    response = await axios.post( "http://localhost:8095/delete/", {
+                            shapeIndex: this.selShape,
+                        });
+                        this.shapes = response.data;
+                        this.clear();
+                    if (this.shapes.length != 0) {
+                        this.shapes.forEach(element => {
+                            if (element != null) {
+                                this.shapeStruct = element;
+                                this.drawShapes();
+                            }
+                        });
+                    }
+                    this.selectedShape = false;
+                    this.selShape = null;
+                    this.currBoardIndex++;
+                    this.oder = null;
                     break;
                 case "RESIZE":
                     // for circle only
@@ -422,6 +452,7 @@ export default {
             }
             this.selShape = false;
             this.currBoardIndex++;
+            this.setcurrIndex;
         },
         getDistance(x1, y1, x2, y2) {
             var a = x1 - x2;
@@ -446,6 +477,7 @@ export default {
                 name: name,
                 fileType: x
             });
+            this.setcurrIndex;
         },
         async load(x) {
             var path = document.getElementById("path");
@@ -463,6 +495,12 @@ export default {
                 });
             }
             this.selectedShape = false;
+            this.setcurrIndex;
+        },
+        async setcurrIndex() {
+            const response = await axios.get("http://localhost:8095/index/set");
+            this.currBoardIndex = response.data;
+
         },
         async undo() {
             const response = await axios.post("http://localhost:8095/undo/", {
@@ -476,9 +514,10 @@ export default {
                 this.drawShapes();
             });
             this.selectedShape = false;
-            if (this.currBoardIndex > 0) {
-                this.currBoardIndex--;
-            }
+            // if (this.currBoardIndex > 0) {
+            //     this.currBoardIndex--;
+            // }
+            this.setcurrIndex;
         },
         async redo() {
             const response = await axios.post("http://localhost:8095/undo/", {
