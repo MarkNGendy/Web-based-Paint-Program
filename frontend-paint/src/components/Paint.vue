@@ -4,17 +4,20 @@
     </div>
     <div class="main">
         <div>
-            <button class="opt" @click="undo">Undo</button>
-            <button class="opt" @click="redo">Redo</button>
-            <label class="opt"
-                >Enter your file path followed by /filename</label
-            >
-            <input class="opt" type="text" id="path" name="fname" />
             <button class="opt" @click="save('JSON')">Save Json</button>
             <button class="opt" @click="load('JSON')">Load Json</button>
             <button class="opt" @click="save('XML')">Save XML</button>
             <button class="opt" @click="load('XML')">Load XML</button>
+            <label class="label"
+                >Enter your file path followed by /*filename*</label
+            >
+            <input class="opt" type="text" id="path" name="fname" />
+        </div>
+        <div>
+            <button class="opt" @click="undo">Undo</button>
+            <button class="opt" @click="redo">Redo</button>
             <button class="opt" @click="btnclear">Clear</button>
+
         </div>
         <div class="shapes">
             <button class="square" @click="setSquare"></button>
@@ -275,7 +278,7 @@ export default {
             var y = e.offsetY;
             var c = document.getElementById("myCanvas");
             var ctx = c.getContext("2d");
-            for (var i = 0; i < this.shapes.length; ++i) {
+            for (var i = this.shapes.length-1; i >= 0 ; --i) {
                 ctx.beginPath();
                 switch (this.shapes[i].shapeType) {
                     case "RECTANGLE":
@@ -338,6 +341,12 @@ export default {
                             this.shapes[i].points[1].x,
                             this.shapes[i].points[1].y
                         );
+                        if (ctx.isPointInStroke(x, y)) {
+                        this.selShape = this.shapes[i].indexInBoard;
+                        this.selShape = i;
+                        this.xBefMov = x;
+                        this.yBefMov = y;
+                        }
                         break;
                     default:
                 }
@@ -440,19 +449,7 @@ export default {
                     break;
                 default:
             }
-            this.shapes = response.data;
-            this.clear();
-            if (this.shapes.length != 0) {
-                this.shapes.forEach(element => {
-                    if (element != null) {
-                        this.shapeStruct = element;
-                        this.drawShapes();
-                    }
-                });
-            }
-            this.selShape = false;
-            this.currBoardIndex++;
-            this.setcurrIndex;
+
         },
         getDistance(x1, y1, x2, y2) {
             var a = x1 - x2;

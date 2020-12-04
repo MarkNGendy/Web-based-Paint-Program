@@ -19,7 +19,7 @@ import java.util.List;
 public class HomeController {
 
     @PostMapping("/shapes/")
-    public List<ShapeDTO> modifyShapes(@RequestBody RequestBodyForm requestBodyForm) {
+    public List<ShapeDTO> createShape(@RequestBody RequestBodyForm requestBodyForm) {
         Board board;
         ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
         ShapeType reqShapeType = requestBodyForm.shape.getShapeType();
@@ -40,13 +40,7 @@ public class HomeController {
             board = new Board();
             board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
         }
-        switch (requestBodyForm.operation) {
-            case CREATE:
-                board.addShape(requiredShape);
-                break;
-            case UPDATE:
-                board.getShapes().set(indexOfShape, requiredShape);
-        }
+        board.addShape(requiredShape);
         saveManager.saveBoard(board);
         return shapeToShapeDTO(board);
     }
@@ -213,6 +207,22 @@ public class HomeController {
                 p.setY(p.getY() + operationsBody.getDeltaY());
                 requiredShape.getPoints().set(i, p);
                 i++;
+        if (index >= 0 && index < board.getShapes().size()) {
+            Shape requiredShape;
+            switch (operationsBody.getOperation()) {
+                case MOVE:
+                    requiredShape = changeShape(board, operationsBody);
+                    board.getShapes().set(index, requiredShape);
+                    break;
+                case COPY:
+                    requiredShape = changeShape(board, operationsBody);
+                    board.addShape(requiredShape);
+                    requiredShape.setIndexInBoard(board.getShapes().size() - 1);
+                    break;
+                case DELETE:
+                    board.getShapes().set(index, null);
+                    break;
+                default:
             }
             board.addShape(requiredShape);
             requiredShape.setIndexInBoard(board.getShapes().size() - 1);
