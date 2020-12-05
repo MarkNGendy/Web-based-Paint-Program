@@ -3,7 +3,7 @@ package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes;
 import java.util.List;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Point;
 
-public class Square extends Rectangle{
+public class Square extends Rectangle {
 
     double sideLength;
 
@@ -27,24 +27,29 @@ public class Square extends Rectangle{
             fourth.setY(origin.getY() + sideLength);
             setWidth(sideLength);
             setLength(sideLength);
-        }
-        else if (maxXDistance < 0 && maxYDistance < 0) {
+        } else if (maxXDistance < 0 && maxYDistance < 0) {
             fourth.setX(origin.getX() - sideLength);
             fourth.setY(origin.getY() - sideLength);
             setWidth(-sideLength);
             setLength(-sideLength);
-        }
-        else if (maxXDistance < 0 && maxYDistance >= 0) {
+        } else if (maxXDistance < 0 && maxYDistance >= 0) {
             fourth.setX(origin.getX() - sideLength);
             fourth.setY(origin.getY() + sideLength);
             setWidth(-sideLength);
             setLength(sideLength);
-        }
-        else if (maxXDistance >= 0 && maxYDistance < 0) {
+        } else if (maxXDistance >= 0 && maxYDistance < 0) {
             fourth.setX(origin.getX() + sideLength);
             fourth.setY(origin.getY() - sideLength);
             setWidth(sideLength);
             setLength(-sideLength);
         }
     }
+
+    @Override
+    public void resize(Double ratio) {
+        width = ratio * width;
+        length = ratio * length;
+        this.ratio = ratio;
+    }
+
 }

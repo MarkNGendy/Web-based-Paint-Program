@@ -172,9 +172,10 @@ public class HomeController {
             board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
         }
         if (operationsBody.getShapeIndex() >= 0 && operationsBody.getShapeIndex() < board.getShapes().size()) {
-            Shape requiredShape = board.getShapes().get(operationsBody.getShapeIndex()).deepCopy(board.getShapes().get(operationsBody.getShapeIndex()));
+            Shape requiredShape = board.getShapes().get(operationsBody.getShapeIndex())
+                    .deepCopy(board.getShapes().get(operationsBody.getShapeIndex()));
             int i = 0;
-            for (Point p: requiredShape.getPoints()) {
+            for (Point p : requiredShape.getPoints()) {
                 p.setX(p.getX() + operationsBody.getDeltaX());
                 p.setY(p.getY() + operationsBody.getDeltaY());
                 requiredShape.getPoints().set(i, p);
@@ -186,6 +187,7 @@ public class HomeController {
         saveManager.saveBoard(board);
         return shapeToShapeDTO(board);
     }
+
     @PostMapping("/move/")
     public List<ShapeDTO> move(@RequestBody OperationsBody operationsBody) {
         Board board;
@@ -197,9 +199,10 @@ public class HomeController {
             board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
         }
         if (operationsBody.getShapeIndex() >= 0 && operationsBody.getShapeIndex() < board.getShapes().size()) {
-            Shape requiredShape = board.getShapes().get(operationsBody.getShapeIndex()).deepCopy(board.getShapes().get(operationsBody.getShapeIndex()));
+            Shape requiredShape = board.getShapes().get(operationsBody.getShapeIndex())
+                    .deepCopy(board.getShapes().get(operationsBody.getShapeIndex()));
             int i = 0;
-            for (Point p: requiredShape.getPoints()) {
+            for (Point p : requiredShape.getPoints()) {
                 p.setX(p.getX() + operationsBody.getDeltaX());
                 p.setY(p.getY() + operationsBody.getDeltaY());
                 requiredShape.getPoints().set(i, p);
@@ -254,7 +257,27 @@ public class HomeController {
 
     @CrossOrigin
     @GetMapping("/index/set")
-    public int setCurrBoardIndex () {
+    public int setCurrBoardIndex() {
         return SaveManager.getSaveManager().getCurrBoardIndex();
+    }
+
+    @CrossOrigin
+    @PostMapping("/resize/")
+    public List<ShapeDTO> resize(@RequestBody OperationsBody operationsBody) {
+        Board board;
+        SaveManager saveManager = SaveManager.getSaveManager();
+        if (saveManager.getBoards().isEmpty()) {
+            board = new Board();
+        } else {
+            board = new Board();
+            board.setShapes(saveManager.getBoards().get(saveManager.getCurrBoardIndex()).getShapes());
+        }
+        if (operationsBody.getShapeIndex() >= 0 && operationsBody.getShapeIndex() < board.getShapes().size()) {
+            Shape requiredShape = board.getShapes().get(operationsBody.getShapeIndex());
+            if (operationsBody.getRatio() > 0)
+                requiredShape.resize(operationsBody.getRatio());
+        }
+        saveManager.saveBoard(board);
+        return shapeToShapeDTO(board);
     }
 }

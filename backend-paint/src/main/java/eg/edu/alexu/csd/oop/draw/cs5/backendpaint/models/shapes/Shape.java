@@ -1,7 +1,7 @@
 package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes;
 
 import java.util.ArrayList;
- import java.util.List;
+import java.util.List;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Point;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.ShapeFactory;
 
@@ -26,6 +26,16 @@ public abstract class Shape {
     String stroke;
     @XmlElement(name = "strokeWidth")
     String strokeWidth;
+
+    double ratio = 1.0;
+
+    public double getRatio() {
+        return ratio;
+    }
+
+    public void setRatio(double ratio) {
+        this.ratio = ratio;
+    }
 
     public void setStroke(String stroke) {
         this.stroke = stroke;
@@ -91,7 +101,7 @@ public abstract class Shape {
     public Shape deepCopy(Shape shape) {
         ShapeFactory shapeFactory = ShapeFactory.getShapeFactory();
         List<Point> pointList = new ArrayList<>();
-        for (Point p: shape.getPoints()) {
+        for (Point p : shape.getPoints()) {
             Point s = new Point();
             s.setX(p.getX());
             s.setY(p.getY());
@@ -103,6 +113,10 @@ public abstract class Shape {
         out.setStrokeWidth(shape.getStrokeWidth());
         out.setStroke(shape.stroke);
         out.setIndexInBoard(shape.getIndexInBoard());
+        System.out.println("resize" + shape.getRatio());
+        out.resize(shape.getRatio());
         return out;
     }
+
+    public abstract void resize(Double ratio);
 }
