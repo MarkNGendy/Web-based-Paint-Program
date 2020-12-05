@@ -279,6 +279,7 @@ export default {
             var ctx = c.getContext("2d");
             for (var i = this.shapes.length - 1; i >= 0; --i) {
                 ctx.beginPath();
+                if (this.shapes[i] == null) continue;
                 switch (this.shapes[i].shapeType) {
                     case "RECTANGLE":
                     case "SQUARE":
