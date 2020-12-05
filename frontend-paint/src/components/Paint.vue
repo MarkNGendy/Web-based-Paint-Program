@@ -489,8 +489,10 @@ export default {
             this.clear();
             if (this.shapes.length != 0) {
                 this.shapes.forEach(element => {
-                    this.shapeStruct = element;
-                    this.drawShapes();
+                    if (element != null) {
+                        this.shapeStruct = element;
+                        this.drawShapes();
+                    }
                 });
             }
             this.selectedShape = false;
@@ -508,8 +510,10 @@ export default {
             this.shapes = response.data;
             this.clear();
             this.shapes.forEach(element => {
-                this.shapeStruct = element;
-                this.drawShapes();
+                if (element != null) {
+                    this.shapeStruct = element;
+                    this.drawShapes();
+                }
             });
             this.selectedShape = false;
             // if (this.currBoardIndex > 0) {
@@ -525,8 +529,10 @@ export default {
             this.shapes = response.data;
             this.clear();
             this.shapes.forEach(element => {
-                this.shapeStruct = element;
-                this.drawShapes();
+                if (element != null) {
+                    this.shapeStruct = element;
+                    this.drawShapes();
+                }
             });
             this.selectedShape = false;
             this.currBoardIndex++;
