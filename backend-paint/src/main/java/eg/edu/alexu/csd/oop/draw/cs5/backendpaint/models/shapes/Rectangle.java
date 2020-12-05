@@ -3,8 +3,7 @@ package eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.shapes;
 import java.util.List;
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Point;
 
-
-public class Rectangle extends Shape{
+public class Rectangle extends Shape {
 
     public double getLength() {
         return length;
@@ -16,7 +15,6 @@ public class Rectangle extends Shape{
 
     double length;
     double width;
-
 
     public void setLength(Double length) {
         this.length = length;
@@ -33,5 +31,12 @@ public class Rectangle extends Shape{
         Point third = new Point(points.get(1).getX(), points.get(0).getY());
         setWidth(third.getX() - origin.getX());
         setLength(second.getY() - origin.getY());
+    }
+
+    @Override
+    public void resize(Double ratio) {
+        width = ratio * width;
+        length = ratio * length;
+        this.ratio = ratio;
     }
 }

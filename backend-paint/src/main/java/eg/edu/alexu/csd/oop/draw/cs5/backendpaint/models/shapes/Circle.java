@@ -4,8 +4,7 @@ import java.util.List;
 
 import eg.edu.alexu.csd.oop.draw.cs5.backendpaint.models.Point;
 
-
-public class Circle extends Ellipse{
+public class Circle extends Ellipse {
 
     public double getRadius() {
         return radius;
@@ -24,5 +23,10 @@ public class Circle extends Ellipse{
         sethRadius(0.0);
     }
 
+    @Override
+    public void resize(Double ratio) {
+        radius = radius * ratio;
+        this.ratio = ratio;
+    }
 
 }

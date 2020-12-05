@@ -5,6 +5,15 @@ public class OperationsBody {
     private double deltaX;
     private double deltaY;
     private Operation operation;
+    private double ratio;
+
+    public double getRatio() {
+        return ratio;
+    }
+
+    public void setRatio(double ratio) {
+        this.ratio = ratio;
+    }
 
     public OperationsBody(Integer shapeIndex, double deltaX, double deltaY, Operation operation) {
         this.shapeIndex = shapeIndex;

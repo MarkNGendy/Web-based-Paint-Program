@@ -435,22 +435,33 @@ export default {
                     this.oder = null;
                     break;
                 case "RESIZE":
-                    // for circle only
-                    /*if(Math.abs(this.getDistance(this.shapes[this.selShape].points[0].x,
-                                        this.shapes[this.selShape].points[0].y,
-                                        this.xBefMov,
-                                        this.yBefMov )-this.shapes[this.selShape].radius)<=5){
-                                            var newRadius = this.getDistance(this.shapes[this.selShape].points[0].x,
-                                                                            this.shapes[this.selShape].points[0].y,
-                                                                            e.offsetX,
-                                                                            e.offsetY);
-                                            response = await axios.post(
-                                            "http://localhost:8095/resize/?index=" + this.selShape
-                                            );
-                                        }*/
+                    console.log(this.selShape);
+                    response = await axios.post(
+                        "http://localhost:8095/resize/",
+                        {
+                            shapeIndex: this.selShape,
+                            ratio: 1.5
+                        }
+                    );
+                    this.shapes = response.data;
+                    console.log(response.data);
+                    this.clear();
+                    if (this.shapes.length != 0) {
+                        this.shapes.forEach(element => {
+                            if (element != null) {
+                                this.shapeStruct = element;
+                                this.drawShapes();
+                            }
+                        });
+                    }
+                    this.selectedShape = false;
+                    this.selShape = null;
+                    this.currBoardIndex++;
+                    this.oder = null;
                     break;
                 default:
             }
+            this.setcurrIndex();
         },
         getDistance(x1, y1, x2, y2) {
             var a = x1 - x2;
