@@ -4,30 +4,30 @@
     </div>
     <div class="main">
         <div>
-            <button class="opt" @click="save('JSON')">Save Json</button>
-            <button class="opt" @click="load('JSON')">Load Json</button>
-            <button class="opt" @click="save('XML')">Save XML</button>
-            <button class="opt" @click="load('XML')">Load XML</button>
+            <button class="opt" @click="save('JSON')" title="save json">Save Json</button>
+            <button class="opt" @click="load('JSON')" title="load json">Load Json</button>
+            <button class="opt" @click="save('XML')" title="save xml">Save XML</button>
+            <button class="opt" @click="load('XML')" title="load xml">Load XML</button>
             <label class="label"
                 >Enter your file path followed by /*filename*</label
             >
-            <input class="opt" type="text" id="path" name="fname" />
+            <input class="opt" type="text" title="enter path of file" id="path" name="fname" />
         </div>
         <div>
-            <button class="opt" @click="undo">Undo</button>
-            <button class="opt" @click="redo">Redo</button>
-            <button class="opt" @click="btnclear">Clear</button>
+            <button class="opt" @click="undo" title="undo">Undo</button>
+            <button class="opt" @click="redo" title="redo">Redo</button>
+            <button class="opt" @click="btnclear" title="clear screen">Clear</button>
         </div>
         <div class="shapes">
-            <button class="square" @click="setSquare"></button>
-            <button class="rectangle" @click="setRectangle"></button>
-            <button class="circle" @click="setCircle"></button>
-            <button class="triangle" @click="setTriangle"></button>
-            <button class="ellipse" @click="setEllipse"></button>
-            <button class="line" @click="setLine"></button>
+            <button class="square" @click="setSquare" title="square"></button>
+            <button class="rectangle" @click="setRectangle" title="rectangle"></button>
+            <button class="circle" @click="setCircle" title="circle"></button>
+            <button class="triangle" @click="setTriangle" title="triangle"></button>
+            <button class="ellipse" @click="setEllipse" title="ellipse"></button>
+            <button class="line" @click="setLine" title="line"></button>
         </div>
         <div>
-            <button class="move" @click="setMove"></button>
+            <button class="move" @click="setMove" ></button>
             <button class="delete" @click="setDelete"></button>
             <button class="resize" @click="setResize"></button>
             <button class="copy" @click="setCopy"></button>
