@@ -535,7 +535,7 @@ export default {
                 }
             });
             this.selectedShape = false;
-            this.currBoardIndex++;
+            this.setcurrIndex();
         },
         setRectangle() {
             this.shapeStruct.points = [];
