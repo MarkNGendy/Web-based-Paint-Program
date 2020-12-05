@@ -2,22 +2,22 @@
     <div class="Paint">
         <h1>{{ msg }}</h1>
     </div>
+    <!-- the user interface code -->
     <div class="main">
+        <!-- save and load buttons -->
         <div>
             <button class="opt" @click="save('JSON')" title="save json">Save Json</button>
             <button class="opt" @click="load('JSON')" title="load json">Load Json</button>
             <button class="opt" @click="save('XML')" title="save xml">Save XML</button>
             <button class="opt" @click="load('XML')" title="load xml">Load XML</button>
-            <label class="label"
-                >Enter your file path followed by /*filename*</label
-            >
-            <input class="opt" type="text" title="enter path of file" id="path" name="fname" />
         </div>
+        <!-- operations on board buttons -->
         <div>
             <button class="opt" @click="undo" title="undo">Undo</button>
             <button class="opt" @click="redo" title="redo">Redo</button>
             <button class="opt" @click="btnclear" title="clear screen">Clear</button>
         </div>
+        <!-- drawing shapes buttons -->
         <div class="shapes">
             <button class="square" @click="setSquare" title="square"></button>
             <button class="rectangle" @click="setRectangle" title="rectangle"></button>
@@ -26,18 +26,21 @@
             <button class="ellipse" @click="setEllipse" title="ellipse"></button>
             <button class="line" @click="setLine" title="line"></button>
         </div>
+        <!-- operations on shapes button -->
         <div>
-            <button class="move" @click="setMove" ></button>
-            <button class="delete" @click="setDelete"></button>
-            <button class="resize" @click="setResize"></button>
-            <button class="copy" @click="setCopy"></button>
+            <button class="move" @click="setMove" title="move" ></button>
+            <button class="delete" @click="setDelete" title="delete"></button>
+            <button class="resize" @click="setResize" title="resize"></button>
+            <button class="copy" @click="setCopy" title="copy"></button>
         </div>
+        <!-- color and stroke inputs -->
         <label class="label">select the fill color:</label>
-        <input type="color" id="myColor" />
+        <input type="color" id="myColor" title="fill color"/>
         <label class="label">select the stroke color:</label>
-        <input type="color" id="myStroke" />
+        <input type="color" id="myStroke" title="stroke coloer"/>
         <label class="label">stroke width</label>
         <input type="number" id="strokeWidth" min="0" max="5" />
+        <!-- drawing area -->
         <canvas
             id="myCanvas"
             width="1500"
@@ -57,10 +60,12 @@ export default {
     props: {
         msg: String
     },
+    /* data used in the front-end project */
     data() {
         return {
             currBoardIndex: 0,
             shapes: [null],
+            /* shapes structure that carry whole shape data */
             shapeStruct: {
                 points: [],
                 shapeType: "null",
@@ -84,14 +89,17 @@ export default {
             yBefMov: 0,
             movedX: 0,
             movedY: 0,
-            oder: "null"
+            oder: "null",
+            resizeRatio: 1
         };
     },
     mounted() {
+        /* mounting our canvas */
         var c = document.getElementById("myCanvas");
         this.canvas = c.getContext("2d");
     },
     methods: {
+        /* function to detect the selected point by mouse click using mouse event (e)*/
         async setPoint(e) {
             if (this.selectedShape == true) {
                 var canvas = document.getElementById("myCanvas");
@@ -124,6 +132,7 @@ export default {
                 }
             }
         },
+        /* function to draw the shape from the shape structure data that came from the back-end project */
         async drawShapes() {
             var canvas = document.getElementById("myCanvas");
             if (canvas.getContext) {
@@ -247,6 +256,7 @@ export default {
                 }
             }
         },
+        /* function that send the data from front-end to back-end to process the data ad draw the shapes */
         async sendRequest() {
             var color = document.getElementById("myColor");
             var stroke = document.getElementById("myStroke");
@@ -271,6 +281,7 @@ export default {
             this.selectedShape = false;
             this.currBoardIndex++;
         },
+        /* function to select the shape to perform the shape operations on it using mouse event (e) */
         async select(e) {
             var x = e.offsetX;
             var y = e.offsetY;
@@ -359,6 +370,8 @@ export default {
                 }
             }
         },
+        /* function to perform the selected operation on the selected shape and send data to back-end
+        then recieve the processed data and re-draw the new shape with the new creatures  */
         async performOrder(e) {
             this.movedX = e.offsetX - this.xBefMov;
             this.movedY = e.offsetY - this.yBefMov;
@@ -366,7 +379,6 @@ export default {
             var response = null;
             switch (this.oder) {
                 case "COPY":
-                    // 3aiz ab3t el delta x w dela y bs mesh 3aref .. esmohom movedX w movedY bs mesh 3aref
                     console.log(this.selShape);
                     response = await axios.post("http://localhost:8095/copy/", {
                         shapeIndex: this.selShape,
@@ -390,7 +402,6 @@ export default {
                     this.oder = null;
                     break;
                 case "MOVE":
-                    // 3aiz ab3t el delta x w dela y bs mesh 3aref .. esmohom movedX w movedY bs mesh 3aref
                     response = await axios.post("http://localhost:8095/move/", {
                         shapeIndex: this.selShape,
                         deltaX: this.movedX,
@@ -440,7 +451,7 @@ export default {
                         "http://localhost:8095/resize/",
                         {
                             shapeIndex: this.selShape,
-                            ratio: 1.5
+                            ratio: this.resizeRatio
                         }
                     );
                     this.shapes = response.data;
@@ -463,36 +474,20 @@ export default {
             }
             this.setcurrIndex();
         },
-        getDistance(x1, y1, x2, y2) {
-            var a = x1 - x2;
-            var b = y1 - y2;
-            var c = Math.sqrt(a * a + b * b);
-            return c;
-        },
-        movTo(e) {
-            this.movedX = e.offsetX - this.xBefMov;
-            this.movedY = e.offsety - this.yBefMov;
-            for (var i = 0; i < this.shapes[this.selShape].points.length; ++i) {
-                this.shapes[this.selShape].points.x += this.movedX;
-                this.shapes[this.selShape].points.y += this.movedY;
-            }
-            console.log(this.shapes[this.selShape]);
-            this.drawShapes();
-        },
+        /* function to save the data in file */
         async save(x) {
-            var path = document.getElementById("path");
-            var name = path.value;
+            var path = prompt("Enter save path followed by name like\n \"C:\\Users\\Dell\\Desktop\\test.json\"");
             await axios.post("http://localhost:8095/save/", {
-                name: name,
+                name: path,
                 fileType: x
             });
             this.setcurrIndex();
         },
+        /* function to load data from file */
         async load(x) {
-            var path = document.getElementById("path");
-            var name = path.value;
+            var path = prompt("Enter path of the file that want to bel loaded like\n \"C:\\Users\\Dell\\Desktop\\test.json\"");
             const response = await axios.post("http://localhost:8095/load/", {
-                name: name,
+                name: path,
                 fileType: x
             });
             this.shapes = response.data;
@@ -508,10 +503,12 @@ export default {
             this.selectedShape = false;
             this.setcurrIndex();
         },
+        /* function to connect between bac and front-end to set the current board */ 
         async setcurrIndex() {
             const response = await axios.get("http://localhost:8095/index/set");
             this.currBoardIndex = response.data;
         },
+        /* undo function */
         async undo() {
             const response = await axios.post("http://localhost:8095/undo/", {
                 currBoardIndex: this.currBoardIndex,
@@ -531,6 +528,7 @@ export default {
             // }
             this.setcurrIndex();
         },
+        /* redo function */
         async redo() {
             const response = await axios.post("http://localhost:8095/undo/", {
                 currBoardIndex: this.currBoardIndex,
@@ -547,6 +545,7 @@ export default {
             this.selectedShape = false;
             this.setcurrIndex();
         },
+        /* functions to set the shape that will be drawn */
         setRectangle() {
             this.shapeStruct.points = [];
             this.shapeStruct.shapeType = "RECTANGLE";
@@ -577,6 +576,7 @@ export default {
             this.shapeStruct.shapeType = "TRIANGLE";
             this.selectedShape = true;
         },
+        /* functions to set the operations that will be acted on the shape */
         setCopy() {
             this.oder = "COPY";
         },
@@ -588,7 +588,9 @@ export default {
         },
         setResize() {
             this.oder = "RESIZE";
+            this.resizeRatio = prompt("Enter resize ratio please");
         },
+        /* clear functions */
         clear() {
             var canvas = document.getElementById("myCanvas");
             var context = canvas.getContext("2d");
@@ -603,7 +605,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 .main {
     background-image: url("./images/cool-background.png");

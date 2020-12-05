@@ -244,6 +244,7 @@ public class HomeController {
                 saver = new XMLFileManager();
                 boards = saver.load(saveRequest.getName()).getBoards();
                 saveManager.setBoards(boardDTOToBoard(boards));
+                saveManager.setCurrBoardIndex(saveManager.getBoards().size() - 1);
                 return shapeToShapeDTO(saveManager.getBoards().get(saveManager.getBoards().size() - 1));
             case JSON:
                 saver = new JSONFileManager();
