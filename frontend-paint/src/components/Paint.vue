@@ -38,7 +38,6 @@
         <input type="color" id="myStroke" />
         <label class="label">stroke width</label>
         <input type="number" id="strokeWidth" min="0" max="5" />
-        <label>{{ selShape }}</label>
         <canvas
             id="myCanvas"
             width="1500"
